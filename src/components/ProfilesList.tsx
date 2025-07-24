@@ -11,13 +11,16 @@ const ProfilesList = ({profiles}: ProfilesListProps) => {
     }
 
     return (
-        <ul>
-            {profiles.map(profile => (
-                <li key={profile.id}>
-                    <Link to={profile.id}>{profile.name}</Link>
-                </li>
-            ))}
-        </ul>
+        <div>
+            <h2>All profiles:</h2>
+            <ul>
+                {profiles.map(profile => (
+                    <li key={profile.id}>
+                        <Link to={profile.id}>{profile.name}</Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
     )
 }
 

@@ -1,12 +1,14 @@
-import {useParams} from "react-router-dom";
+import {useRouteLoaderData} from "react-router-dom";
+import ProfileItem from "../components/ProfileItem.tsx";
+import type {Profile} from "../models/profile.ts";
 
 const ProfileDetailPage = () => {
-    const params = useParams<{ profileId: string }>();
+    const profile = useRouteLoaderData('profile-detail') as Profile;
 
     return (
         <div>
             <h1>Profile Detail Page</h1>
-            <p>This is the profile detail page. for {params.profileId}</p>
+            <ProfileItem profile={profile}/>
         </div>
     );
 }
