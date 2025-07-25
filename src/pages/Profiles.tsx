@@ -1,9 +1,20 @@
 import ProfilesList from "../components/ProfilesList.tsx";
-import {useLoaderData} from "react-router-dom";
-import type {Profile} from "../models/profile.ts";
+import {useAppDispatch, useAppSelector} from "../store/hooks.ts";
+import {getProfiles} from "../api.ts";
+import {useEffect} from "react";
+import {receivedProfiles} from "../store/profilesSlice.ts";
 
 const ProfilesPage = () => {
-    const profiles = useLoaderData() as Profile[];
+    const profiles = useAppSelector(state => state.profiles.profiles);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        const fetchProfiles = async () => {
+            const profiles = await getProfiles();
+            dispatch(receivedProfiles(profiles));
+        };
+        fetchProfiles();
+    }, [dispatch]);
 
     return (
         <div>

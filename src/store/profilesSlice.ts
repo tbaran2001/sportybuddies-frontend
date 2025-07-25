@@ -1,0 +1,23 @@
+import type {Profile} from "../models/profile.ts";
+import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
+
+export interface ProfilesState {
+    profiles: Profile[];
+}
+
+const initialState: ProfilesState = {
+    profiles: [],
+};
+
+const profilesSlice = createSlice({
+    name: 'profiles',
+    initialState,
+    reducers: {
+        receivedProfiles: (state, action: PayloadAction<Profile[]>) => {
+            state.profiles = action.payload;
+        }
+    }
+})
+
+export const {receivedProfiles} = profilesSlice.actions;
+export const profilesReducer = profilesSlice.reducer;
