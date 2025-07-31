@@ -13,11 +13,11 @@ const sportsSlice = createSlice({
     name: 'sports',
     initialState,
     reducers: {
-        receivedSports: (state, action: PayloadAction<Sport[]>) => {
+        setSports: (state, action: PayloadAction<Sport[]>) => {
             state.sports = action.payload;
         }
     }
 });
 
-export const {receivedSports} = sportsSlice.actions;
+export const {setSports} = sportsSlice.actions;
 export const sportsReducer = sportsSlice.reducer;

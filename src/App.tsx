@@ -6,13 +6,12 @@ import RootLayout from "./pages/Root.tsx";
 import ErrorPage from "./pages/Error.tsx";
 import EditProfilePage from "./pages/EditProfile.tsx";
 import ProfileDetailPage from "./pages/ProfileDetail.tsx";
-import {myProfileLoader, profileLoader, profilesLoader} from "./react-router-things/profileLoaders.ts";
-import {editProfileAction} from "./react-router-things/profileActions.ts";
 import AuthenticationPage from "./pages/Authentication.tsx";
 import {getTokenAction} from "./react-router-things/authActions.ts";
 import MyProfilePage from "./pages/MyProfile.tsx";
 import {logoutAction} from "./pages/Logout.tsx";
-import {checkAuthTokenLoader, tokenLoader} from "./utils/auth.ts";
+import {tokenLoader} from "./utils/auth.ts";
+import ProtectedLayout from "./pages/ProtectedLayout.tsx";
 
 
 const router = createBrowserRouter([
@@ -42,30 +41,30 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <ProfilesPage/>,
-                        loader: profilesLoader,
-                    },
-                    {
-                        path: 'me',
-                        element: <MyProfilePage/>,
-                        loader: myProfileLoader,
                     },
                     {
                         path: ':profileId',
                         id: 'profile-detail',
-                        loader: profileLoader,
                         children: [
                             {
                                 index: true,
                                 element: <ProfileDetailPage/>,
                             },
-                            {
-                                path: 'edit',
-                                element: <EditProfilePage/>,
-                                action: editProfileAction,
-                                loader: checkAuthTokenLoader,
-                            }
                         ]
                     },
+                ]
+            },
+            {
+                element: <ProtectedLayout/>,
+                children: [
+                    {
+                        path: 'profiles/me',
+                        element: <MyProfilePage/>,
+                    },
+                    {
+                        path: 'profiles/:profileId/edit',
+                        element: <EditProfilePage/>,
+                    }
                 ]
             }
         ]

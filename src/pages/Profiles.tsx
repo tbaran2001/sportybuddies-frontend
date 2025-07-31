@@ -1,28 +1,23 @@
 import ProfilesList from "../components/ProfilesList.tsx";
-import {useAppDispatch, useAppSelector} from "../store/hooks.ts";
-import {getProfiles} from "../api.ts";
-import {useEffect} from "react";
-import {receivedProfiles} from "../store/profilesSlice.ts";
+import {useGetProfilesQuery} from "../store/api.ts";
 
 const ProfilesPage = () => {
-    const profiles = useAppSelector(state => state.profiles.profiles);
-    const dispatch = useAppDispatch();
+    const {data: profiles, isLoading, isError} = useGetProfilesQuery();
 
-    useEffect(() => {
-        const fetchProfiles = async () => {
-            const profiles = await getProfiles();
-            dispatch(receivedProfiles(profiles));
-        };
-        fetchProfiles();
-    }, [dispatch]);
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (isError || !profiles) {
+        return <div>Error</div>;
+    }
 
     return (
         <div>
             <h1>Profiles page</h1>
             <ProfilesList profiles={profiles}/>
         </div>
-    )
-}
+    );
+};
 
 export default ProfilesPage;
-

@@ -1,4 +1,4 @@
-import type {Profile} from "../models/profile.ts";
+import type {Profile, Sport} from "../models/profile.ts";
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
 export interface MyProfileState {
@@ -9,13 +9,11 @@ const initialState: MyProfileState = {
     myProfile: null,
 }
 
+
 const myProfileSlice = createSlice({
     name: 'myProfile',
     initialState,
     reducers: {
-        receivedMyProfile: (state, action: PayloadAction<Profile>) => {
-            state.myProfile = action.payload;
-        },
         addSportToMyProfile: (state, action: PayloadAction<Sport>) => {
             if (state.myProfile) {
                 state.myProfile.sports.push(action.payload);
@@ -28,8 +26,8 @@ const myProfileSlice = createSlice({
                 );
             }
         }
-    }
+    },
 })
 
-export const {receivedMyProfile, addSportToMyProfile, removeSportFromMyProfile} = myProfileSlice.actions;
+export const {addSportToMyProfile, removeSportFromMyProfile} = myProfileSlice.actions;
 export const myProfileReducer = myProfileSlice.reducer;

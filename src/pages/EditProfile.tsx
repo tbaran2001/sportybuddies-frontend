@@ -1,34 +1,78 @@
-import {Form, useRouteLoaderData} from "react-router-dom";
-import type {Profile} from "../models/profile.ts";
-import {useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import * as React from "react";
+import {useUpdateProfileMutation, useGetProfileQuery} from "../store/api.ts";
 
 const EditProfilePage = () => {
-    const profile = useRouteLoaderData('profile-detail') as Profile;
+    const { profileId } = useParams<{ profileId: string }>();
+    const navigate = useNavigate();
+    const { data: profile, isLoading: isProfileLoading, error: profileError } = useGetProfileQuery(profileId!);
+    const [updateProfile, {isLoading, error}] = useUpdateProfileMutation();
 
     const [formData, setFormData] = useState({
-        name: profile.name,
-        description: profile.description ?? '',
-        gender: profile.gender,
-        dateOfBirth: new Date(profile.dateOfBirth).toISOString().split('T')[0],
+        name: profile?.name || '',
+        description: profile?.description ?? '',
+        gender: profile?.gender || 0,
+        dateOfBirth: profile ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
     });
+
+    useEffect(() => {
+        if (profile) {
+            setFormData({
+                name: profile.name,
+                description: profile.description ?? '',
+                gender: profile.gender,
+                dateOfBirth: new Date(profile.dateOfBirth).toISOString().split('T')[0],
+            });
+        }
+    }, [profile]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const {name, value} = e.target;
         setFormData(prev => ({...prev, [name]: value}));
     };
 
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!profile) return;
+
+        try {
+            await updateProfile({
+                profileId: profile.id,
+                name: formData.name,
+                description: formData.description,
+                gender: Number(formData.gender),
+                dateOfBirth: formData.dateOfBirth,
+            }).unwrap();
+
+            navigate(`/profiles/${profile.id}`);
+        } catch (err) {
+            console.error('Failed to update profile:', err);
+        }
+    };
+
+    if (isProfileLoading) {
+        return <div>Loading profile...</div>;
+    }
+
+    if (profileError) {
+        return <div>Error loading profile. Please try again.</div>;
+    }
+
+    if (!profile) {
+        return <div>Profile not found.</div>;
+    }
+
     return (
         <div>
             <h1>Edit Profile</h1>
-            <Form method='post'>
-                <div>
-                    <input
-                        type="hidden"
-                        name="profileId"
-                        value={profile.id}
-                    />
+            {error && (
+                <div style={{color: 'red', marginBottom: '1rem'}}>
+                    Error updating profile. Please try again.
                 </div>
+            )}
+            <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="name">Name</label>
                     <input
@@ -73,8 +117,10 @@ const EditProfilePage = () => {
                         required
                     />
                 </div>
-                <button type="submit">Save Changes</button>
-            </Form>
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Saving...' : 'Save Changes'}
+                </button>
+            </form>
         </div>
     );
 }

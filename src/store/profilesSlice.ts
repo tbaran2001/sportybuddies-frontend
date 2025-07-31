@@ -13,11 +13,11 @@ const profilesSlice = createSlice({
     name: 'profiles',
     initialState,
     reducers: {
-        receivedProfiles: (state, action: PayloadAction<Profile[]>) => {
+        setProfiles: (state, action: PayloadAction<Profile[]>) => {
             state.profiles = action.payload;
         }
     }
 })
 
-export const {receivedProfiles} = profilesSlice.actions;
+export const {setProfiles} = profilesSlice.actions;
 export const profilesReducer = profilesSlice.reducer;
