@@ -6,13 +6,12 @@ import GenderSelect from "./GenderSelect.tsx";
 import DistanceSlider from "./DistanceSlider.tsx";
 
 export const PreferencesForm = () => {
-    console.log("PreferencesForm rendered");
     const {data: myProfile, isLoading} = useGetMyProfileQuery();
     const [updateProfilePreferences] = useUpdateProfilePreferencesMutation();
 
     const [ageRange, setAgeRange] = useState([18, 100]);
     const [distance, setDistance] = useState(50);
-    const [selectedGender, setSelectedGender] = useState(3);
+    const [selectedGender, setSelectedGender] = useState(0);
 
     useEffect(() => {
         if (myProfile?.preferences) {

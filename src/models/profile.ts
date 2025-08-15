@@ -30,3 +30,13 @@ export interface Profile {
     sports: Sport[];
 }
 
+export interface Match {
+    id: string;
+    oppositeMatchId: string;
+    profileId: string;
+    matchedProfile: Profile;
+    matchDateTime: string;
+    swipe: number | null;
+    swipeDateTime: string | null;
+    distance: number;
+}

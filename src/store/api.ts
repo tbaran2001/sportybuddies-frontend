@@ -1,5 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import type {Profile, Sport} from '../models/profile.ts';
+import type {Match, Profile, Sport} from '../models/profile.ts';
 import type {RootState} from "./store.ts";
 import type {BaseQueryFn} from '@reduxjs/toolkit/query';
 
@@ -18,12 +18,25 @@ const baseQuery = fetchBaseQuery({
 });
 
 const baseQueryWithLogging: BaseQueryFn = async (args, api, extraOptions) => {
-    console.log('🚀 API Request:', {
-        url: args.url,
-        method: args.method,
-        body: args.body,
-        headers: args.headers
-    });
+    // Handle different argument formats in RTK Query
+    let logData;
+    if (typeof args === 'string') {
+        logData = {
+            url: args,
+            method: 'GET',
+            body: undefined,
+            headers: undefined
+        };
+    } else {
+        logData = {
+            url: args.url,
+            method: args.method || 'GET',
+            body: args.body,
+            headers: args.headers
+        };
+    }
+
+    console.log('🚀 API Request:', logData);
 
     const result = await baseQuery(args, api, extraOptions);
 
@@ -39,13 +52,13 @@ const baseQueryWithLogging: BaseQueryFn = async (args, api, extraOptions) => {
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithLogging,
-    tagTypes: ['MyProfile'],
+    tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch'],
     endpoints: (builder) => ({
         login: builder.mutation<string, string>({
             query: (email) => ({
                 url: 'auth/generate-and-create-test-user',
                 method: 'POST',
-                body: { email },
+                body: {email},
             }),
             transformResponse: (response: { message: string; userId: string; token: string }) => response.token,
         }),
@@ -65,6 +78,7 @@ export const api = createApi({
         getSports: builder.query<Sport[], void>({
             query: () => 'sports',
             transformResponse: (response: { sports: Sport[] }) => response.sports,
+            providesTags: ['Sports'],
         }),
         addProfileSport: builder.mutation<void, { profileId: string; sportId: string }>({
             query: ({profileId, sportId}) => ({
@@ -124,6 +138,19 @@ export const api = createApi({
             }),
             invalidatesTags: ['MyProfile'],
         }),
+        getRandomMatch: builder.query<Match | null, string>({
+            query: (profileId) => `matches/GetRandomMatch/${profileId}`,
+            transformResponse: (response: { match: Match | null }) => response.match,
+            providesTags: ['RandomMatch'],
+        }),
+        updateMatchSwipe: builder.mutation<void, { matchId: string; swipe: number }>({
+            query: ({matchId, swipe}) => ({
+                url: `matches/${matchId}`,
+                method: 'PUT',
+                body: {swipe},
+            }),
+            invalidatesTags: ['RandomMatch'],
+        })
     }),
 });
 
@@ -138,4 +165,6 @@ export const {
     useUpdateProfileMutation,
     useUpdateProfilePartialMutation,
     useUpdateProfilePreferencesMutation,
+    useGetRandomMatchQuery,
+    useUpdateMatchSwipeMutation
 } = api;
