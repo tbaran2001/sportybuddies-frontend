@@ -1,7 +1,9 @@
-import {Form, NavLink, useRouteLoaderData} from "react-router-dom";
+import {NavLink} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {selectCurrentToken} from "../store/authSlice";
 
 const MainNavigation = () => {
-    const token = useRouteLoaderData('root');
+    const token = useSelector(selectCurrentToken);
 
     return (
         <header>
@@ -32,9 +34,9 @@ const MainNavigation = () => {
                                 </NavLink>
                             </li>
                             <li>
-                                <Form action='/logout' method={'post'}>
-                                    <button>Logout</button>
-                                </Form>
+                                <NavLink to='/logout' className={({isActive}) => isActive ? 'active' : undefined}>
+                                    Logout
+                                </NavLink>
                             </li>
                         </>
                     )}

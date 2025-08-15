@@ -1,15 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit";
-import {profilesReducer} from "./profilesSlice.ts";
-import {myProfileReducer} from "./myProfileSlice.ts";
-import {sportsReducer} from "./sportsSlice.ts";
 import {api} from "./api.ts";
+import authReducer from "./authSlice.ts";
 
 export const store = configureStore({
     reducer: {
         [api.reducerPath]: api.reducer,
-        profiles: profilesReducer,
-        myProfile: myProfileReducer,
-        sports: sportsReducer,
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(api.middleware),

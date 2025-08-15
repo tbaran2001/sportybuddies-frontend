@@ -1,5 +1,10 @@
 import './App.css'
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {
+    createBrowserRouter,
+    RouterProvider,
+    createRoutesFromElements,
+    Route
+} from "react-router-dom";
 import HomePage from "./pages/Home.tsx";
 import ProfilesPage from "./pages/Profiles.tsx";
 import RootLayout from "./pages/Root.tsx";
@@ -7,75 +12,35 @@ import ErrorPage from "./pages/Error.tsx";
 import EditProfilePage from "./pages/EditProfile.tsx";
 import ProfileDetailPage from "./pages/ProfileDetail.tsx";
 import AuthenticationPage from "./pages/Authentication.tsx";
-import {getTokenAction} from "./react-router-things/authActions.ts";
 import MyProfilePage from "./pages/MyProfile.tsx";
-import {logoutAction} from "./pages/Logout.tsx";
-import {tokenLoader} from "./utils/auth.ts";
 import ProtectedLayout from "./pages/ProtectedLayout.tsx";
-
-
-const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <RootLayout/>,
-        errorElement: <ErrorPage/>,
-        id: 'root',
-        loader: tokenLoader,
-        children: [
-            {
-                index: true,
-                element: <HomePage/>
-            },
-            {
-                path: 'auth',
-                element: <AuthenticationPage/>,
-                action: getTokenAction,
-            },
-            {
-                path: 'logout',
-                action: logoutAction,
-            },
-            {
-                path: 'profiles',
-                children: [
-                    {
-                        index: true,
-                        element: <ProfilesPage/>,
-                    },
-                    {
-                        path: ':profileId',
-                        id: 'profile-detail',
-                        children: [
-                            {
-                                index: true,
-                                element: <ProfileDetailPage/>,
-                            },
-                        ]
-                    },
-                ]
-            },
-            {
-                element: <ProtectedLayout/>,
-                children: [
-                    {
-                        path: 'profiles/me',
-                        element: <MyProfilePage/>,
-                    },
-                    {
-                        path: 'profiles/:profileId/edit',
-                        element: <EditProfilePage/>,
-                    }
-                ]
-            }
-        ]
-    },
-])
+import { logoutLoader } from "./pages/Logout.tsx";
 
 function App() {
 
+    const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route path="/" element={<RootLayout/>} errorElement={<ErrorPage/>} id="root">
+                <Route index element={<HomePage/>}/>
+                <Route path="auth" element={<AuthenticationPage />}/>
+                <Route path="logout" loader={logoutLoader}/>
+                <Route path="profiles">
+                    <Route index element={<ProfilesPage/>}/>
+                    <Route path=":profileId" id="profile-detail">
+                        <Route index element={<ProfileDetailPage/>}/>
+                    </Route>
+                </Route>
+                <Route element={<ProtectedLayout/>}>
+                    <Route path="profiles/me" element={<MyProfilePage/>}/>
+                    <Route path="profiles/:profileId/edit" element={<EditProfilePage/>}/>
+                </Route>
+            </Route>
+        )
+    );
+
     return (
         <RouterProvider router={router}/>
-    )
+    );
 }
 
-export default App
+export default App;
