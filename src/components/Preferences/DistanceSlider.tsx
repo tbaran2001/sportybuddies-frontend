@@ -17,7 +17,7 @@ const marks = [
     },
 ];
 
-const DistanceSliderComponent = ({maxDistance, onChange}: DistanceSliderProps) => {
+const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
 
     console.log("DistanceSlider rendered");
     const value = maxDistance;
@@ -74,4 +74,4 @@ const DistanceSliderComponent = ({maxDistance, onChange}: DistanceSliderProps) =
     );
 };
 
-export const DistanceSlider = memo(DistanceSliderComponent);
+export default memo(DistanceSlider);

@@ -1,9 +1,9 @@
 import {useState, useEffect, useCallback} from "react";
 import {Box, Button} from "@mui/material";
-import {AgeRangeSlider} from "./AgeRangeSlider.tsx";
-import {DistanceSlider} from "./DistanceSlider.tsx";
-import {GenderSelect} from "./GenderSelect.tsx";
 import {useGetMyProfileQuery, useUpdateProfilePreferencesMutation} from "../../store/api.ts";
+import AgeRangeSlider from "./AgeRangeSlider.tsx";
+import GenderSelect from "./GenderSelect.tsx";
+import DistanceSlider from "./DistanceSlider.tsx";
 
 export const PreferencesForm = () => {
     console.log("PreferencesForm rendered");

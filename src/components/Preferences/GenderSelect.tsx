@@ -7,7 +7,7 @@ interface GenderSelectProps {
     onChange: (value: string) => void;
 }
 
-const GenderSelectComponent = ({gender, onChange}: GenderSelectProps) => {
+const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
     console.log("GenderSelect rendered");
     const handleChange = useCallback((event: SelectChangeEvent) => {
         onChange(event.target.value);
@@ -33,4 +33,4 @@ const GenderSelectComponent = ({gender, onChange}: GenderSelectProps) => {
     );
 };
 
-export const GenderSelect = memo(GenderSelectComponent);
+export default memo(GenderSelect);

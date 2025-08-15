@@ -18,30 +18,43 @@ const marks = [
     },
 ];
 
-const AgeRangeSliderComponent = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
+const MIN_AGE = 18;
+const MAX_AGE = 120;
+const normalizeRange = (value: [number, number], changedIndex?: number): [number, number] => {
+    let [lo, hi] = value;
+
+    lo = Math.min(Math.max(lo, MIN_AGE), MAX_AGE);
+    hi = Math.min(Math.max(hi, MIN_AGE), MAX_AGE);
+
+    if (lo > hi) {
+        if (changedIndex === 0) {
+            hi = lo;
+        } else if (changedIndex === 1) {
+            lo = hi;
+        } else {
+            [lo, hi] = [Math.min(lo, hi), Math.max(lo, hi)];
+        }
+    }
+    return [lo, hi];
+};
+
+const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
     console.log("AgeRangeSlider rendered");
     const value: [number, number] = [minAge, maxAge];
 
     const handleSliderChange = useCallback((_event: Event, newValue: number | number[]) => {
         const rangeValue = newValue as [number, number];
-        onChange(rangeValue);
+        onChange(normalizeRange(rangeValue));
     }, [onChange]);
 
     const handleInputChange = useCallback((index: number) => (event: ChangeEvent<HTMLInputElement>) => {
-        const newValue: [number, number] = [minAge, maxAge];
-        newValue[index] = Number(event.target.value);
-
-        if (newValue[0] < 18) newValue[0] = 18;
-        if (newValue[1] > 120) newValue[1] = 120;
-        if (newValue[0] > newValue[1]) newValue[index === 0 ? 1 : 0] = newValue[index];
-        onChange(newValue);
+        const next: [number, number] = [minAge, maxAge];
+        next[index] = Number(event.target.value);
+        onChange(normalizeRange(next, index));
     }, [minAge, maxAge, onChange]);
 
     const handleBlur = useCallback(() => {
-        const newValue: [number, number] = [minAge, maxAge];
-        if (newValue[0] < 18) newValue[0] = 18;
-        if (newValue[1] > 120) newValue[1] = 120;
-        onChange(newValue);
+        onChange(normalizeRange([minAge, maxAge]));
     }, [minAge, maxAge, onChange]);
 
     return (
@@ -52,9 +65,10 @@ const AgeRangeSliderComponent = ({minAge, maxAge, onChange}: AgeRangeSliderProps
                 value={value}
                 onChange={handleSliderChange}
                 valueLabelDisplay="auto"
-                min={18}
-                max={120}
+                min={MIN_AGE}
+                max={MAX_AGE}
                 marks={marks}
+                disableSwap
             />
             <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 1}}>
                 <TextField
@@ -65,8 +79,8 @@ const AgeRangeSliderComponent = ({minAge, maxAge, onChange}: AgeRangeSliderProps
                     type="number"
                     slotProps={{
                         htmlInput: {
-                            min: 18,
-                            max: 120
+                            min: MIN_AGE,
+                            max: MAX_AGE
                         }
                     }}
                     variant="outlined"
@@ -79,8 +93,8 @@ const AgeRangeSliderComponent = ({minAge, maxAge, onChange}: AgeRangeSliderProps
                     type="number"
                     slotProps={{
                         htmlInput: {
-                            min: 18,
-                            max: 120
+                            min: MIN_AGE,
+                            max: MAX_AGE
                         }
                     }}
                     variant="outlined"
@@ -90,4 +104,4 @@ const AgeRangeSliderComponent = ({minAge, maxAge, onChange}: AgeRangeSliderProps
     );
 };
 
-export const AgeRangeSlider = memo(AgeRangeSliderComponent);
+export default memo(AgeRangeSlider);
