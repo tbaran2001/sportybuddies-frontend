@@ -1,11 +1,36 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+const getTokenFromStorage = (): string | null => {
+    try {
+        return localStorage.getItem('authToken');
+    } catch (error) {
+        console.error('Error reading token from localStorage:', error);
+        return null;
+    }
+};
+
+const setTokenInStorage = (token: string): void => {
+    try {
+        localStorage.setItem('authToken', token);
+    } catch (error) {
+        console.error('Error saving token to localStorage:', error);
+    }
+};
+
+const removeTokenFromStorage = (): void => {
+    try {
+        localStorage.removeItem('authToken');
+    } catch (error) {
+        console.error('Error removing token from localStorage:', error);
+    }
+};
+
 interface AuthState {
     token: string | null;
 }
 
 const initialState: AuthState = {
-    token: null,
+    token: getTokenFromStorage(),
 };
 
 const authSlice = createSlice({
@@ -18,9 +43,11 @@ const authSlice = createSlice({
         ) => {
             const { token } = action.payload;
             state.token = token;
+            setTokenInStorage(token);
         },
         logOut: (state) => {
             state.token = null;
+            removeTokenFromStorage();
         },
     },
 });
