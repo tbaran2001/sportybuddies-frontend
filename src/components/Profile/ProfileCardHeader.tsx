@@ -3,7 +3,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useGetMyProfileQuery} from "../../store/api.ts";
 
 export const ProfileCardHeader = () => {
-    const {data: profile, isLoading} = useGetMyProfileQuery();
+    const {data: myProfile, isLoading} = useGetMyProfileQuery();
 
     const calculateAge = (dateOfBirth: string) => {
         const dob = new Date(dateOfBirth);
@@ -18,7 +18,7 @@ export const ProfileCardHeader = () => {
         return age;
     };
 
-    if (isLoading || !profile) {
+    if (isLoading || !myProfile) {
         return <CardHeader title="Loading profile..." />;
     }
 
@@ -31,13 +31,13 @@ export const ProfileCardHeader = () => {
             )}
             title={
                 <Typography variant="h6">
-                    {profile.name}, {calculateAge(profile.dateOfBirth)}l
+                    {myProfile.name}, {calculateAge(myProfile.dateOfBirth)}l
                 </Typography>
             }
             subheader={
                 <Box>
                     <Typography variant="subtitle1">
-                        {profile.location?.address && <span>{profile.location.address} </span>}
+                        {myProfile.location?.address && <span>{myProfile.location.address} </span>}
                     </Typography>
                 </Box>
             }

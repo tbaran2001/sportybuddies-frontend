@@ -1,5 +1,6 @@
 import {Box, Typography} from "@mui/material";
 import {PreferencesForm} from "./PreferencesForm.tsx";
+import { SportsForm } from "./SportsForm.tsx";
 
 export const Preferences = () => {
     return (
@@ -8,6 +9,7 @@ export const Preferences = () => {
                 Your preferences
             </Typography>
             <PreferencesForm/>
+            <SportsForm/>
         </Box>
     );
 };
