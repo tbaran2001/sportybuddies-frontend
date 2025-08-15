@@ -2,6 +2,7 @@ import {Box, IconButton, Stack, styled, CircularProgress} from "@mui/material";
 import {FavoriteBorderOutlined, ThumbDownOutlined} from '@mui/icons-material';
 import {useGetMyProfileQuery, useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from "../store/api.ts";
 import { useEffect } from "react";
+import {MatchProfileCard} from "../components/Matching/MatchProfileCard.tsx";
 
 const SwipeBox = styled(Box)(() => ({
     flex: "1",
@@ -58,9 +59,7 @@ export const MatchingPage = () => {
                 </IconButton>
             </SwipeBox>
             <Box display="flex" justifyContent="center" alignItems="center" position="relative">
-                <Box>
-                    {randomMatch.matchedProfile.name}
-                </Box>
+                <MatchProfileCard profile={randomMatch.matchedProfile} />
             </Box>
             <SwipeBox>
                 <IconButton

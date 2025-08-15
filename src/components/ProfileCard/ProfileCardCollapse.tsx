@@ -5,26 +5,31 @@ import type {Profile} from "../../models/profile.ts";
 
 interface ProfileCardCollapseProps {
     profile: Profile;
+    readOnly?: boolean;
 }
 
-export const ProfileCardCollapse = ({profile}: ProfileCardCollapseProps) => {
+export const ProfileCardCollapse = ({profile, readOnly = false}: ProfileCardCollapseProps) => {
     const [updateProfilePartial, {isLoading: isLoadingUpdate}] = useUpdateProfilePartialMutation();
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedDescription, setEditedDescription] = useState(profile.description || '');
 
     const handleEditClick = () => {
-        setIsEditing(true);
+        if (!readOnly) {
+            setIsEditing(true);
+        }
     };
 
     const handleSaveClick = async () => {
-        updateProfilePartial({profileId: profile.id, description: editedDescription});
-        setIsEditing(false);
+        if (!readOnly) {
+            updateProfilePartial({profileId: profile.id, description: editedDescription});
+            setIsEditing(false);
+        }
     };
 
     return (
         <CardContent>
-            {isEditing ? (
+            {isEditing && !readOnly ? (
                 <TextField
                     fullWidth
                     value={editedDescription}
@@ -32,16 +37,18 @@ export const ProfileCardCollapse = ({profile}: ProfileCardCollapseProps) => {
                     multiline
                 />
             ) : (
-                <Typography>{editedDescription}</Typography>
+                <Typography>{profile.description || editedDescription}</Typography>
             )}
-            {isEditing ? (
-                <Button variant="contained" onClick={handleSaveClick} disabled={isLoadingUpdate}>
-                    {isLoadingUpdate ? 'Saving...' : 'Save Description'}
-                </Button>
-            ) : (
-                <Button variant="contained" onClick={handleEditClick}>
-                    Edit Description
-                </Button>
+            {!readOnly && (
+                isEditing ? (
+                    <Button variant="contained" onClick={handleSaveClick} disabled={isLoadingUpdate}>
+                        {isLoadingUpdate ? 'Saving...' : 'Save Description'}
+                    </Button>
+                ) : (
+                    <Button variant="contained" onClick={handleEditClick}>
+                        Edit Description
+                    </Button>
+                )
             )}
         </CardContent>
     );
