@@ -1,4 +1,4 @@
-import {type ChangeEvent} from "react";
+import {type ChangeEvent, memo, useCallback} from "react";
 import {Box, Slider, TextField, Typography} from "@mui/material";
 
 interface AgeRangeSliderProps {
@@ -18,15 +18,16 @@ const marks = [
     },
 ];
 
-export const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
+const AgeRangeSliderComponent = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
+    console.log("AgeRangeSlider rendered");
     const value: [number, number] = [minAge, maxAge];
 
-    const handleSliderChange = (_event: Event, newValue: number | number[]) => {
+    const handleSliderChange = useCallback((_event: Event, newValue: number | number[]) => {
         const rangeValue = newValue as [number, number];
         onChange(rangeValue);
-    };
+    }, [onChange]);
 
-    const handleInputChange = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = useCallback((index: number) => (event: ChangeEvent<HTMLInputElement>) => {
         const newValue: [number, number] = [minAge, maxAge];
         newValue[index] = Number(event.target.value);
 
@@ -34,14 +35,14 @@ export const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) 
         if (newValue[1] > 120) newValue[1] = 120;
         if (newValue[0] > newValue[1]) newValue[index === 0 ? 1 : 0] = newValue[index];
         onChange(newValue);
-    };
+    }, [minAge, maxAge, onChange]);
 
-    const handleBlur = () => {
+    const handleBlur = useCallback(() => {
         const newValue: [number, number] = [minAge, maxAge];
         if (newValue[0] < 18) newValue[0] = 18;
         if (newValue[1] > 120) newValue[1] = 120;
         onChange(newValue);
-    };
+    }, [minAge, maxAge, onChange]);
 
     return (
         <Box m={2}>
@@ -88,3 +89,5 @@ export const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) 
         </Box>
     );
 };
+
+export const AgeRangeSlider = memo(AgeRangeSliderComponent);

@@ -1,4 +1,4 @@
-import {type ChangeEvent} from "react";
+import {type ChangeEvent, memo, useCallback} from "react";
 import {Box, Slider, TextField, Typography} from "@mui/material";
 
 interface DistanceSliderProps {
@@ -17,27 +17,29 @@ const marks = [
     },
 ];
 
-export const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
+const DistanceSliderComponent = ({maxDistance, onChange}: DistanceSliderProps) => {
+
+    console.log("DistanceSlider rendered");
     const value = maxDistance;
 
-    const handleSliderChange = (_event: Event, newValue: number | number[]) => {
+    const handleSliderChange = useCallback((_event: Event, newValue: number | number[]) => {
         const numValue = Array.isArray(newValue) ? newValue[0] : newValue;
         onChange(numValue);
-    };
+    }, [onChange]);
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         let newValue = Number(event.target.value);
         if (newValue < 1) newValue = 1;
         if (newValue > 100) newValue = 100;
         onChange(newValue);
-    };
+    }, [onChange]);
 
-    const handleBlur = () => {
+    const handleBlur = useCallback(() => {
         let newValue = value;
         if (newValue < 1) newValue = 1;
         if (newValue > 100) newValue = 100;
         onChange(newValue);
-    };
+    }, [value, onChange]);
 
     return (
         <Box m={2}>
@@ -71,3 +73,5 @@ export const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => 
         </Box>
     );
 };
+
+export const DistanceSlider = memo(DistanceSliderComponent);

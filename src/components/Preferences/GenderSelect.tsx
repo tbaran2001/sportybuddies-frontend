@@ -1,15 +1,17 @@
 import {Box, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import type {SelectChangeEvent} from "@mui/material";
+import {memo, useCallback} from "react";
 
 interface GenderSelectProps {
     gender: string;
     onChange: (value: string) => void;
 }
 
-export const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
-    const handleChange = (event: SelectChangeEvent) => {
+const GenderSelectComponent = ({gender, onChange}: GenderSelectProps) => {
+    console.log("GenderSelect rendered");
+    const handleChange = useCallback((event: SelectChangeEvent) => {
         onChange(event.target.value);
-    };
+    }, [onChange]);
 
     return (
         <Box m={2}>
@@ -30,3 +32,5 @@ export const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
         </Box>
     );
 };
+
+export const GenderSelect = memo(GenderSelectComponent);

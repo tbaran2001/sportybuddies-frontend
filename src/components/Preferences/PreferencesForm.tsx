@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import {Box, Button} from "@mui/material";
 import {AgeRangeSlider} from "./AgeRangeSlider.tsx";
 import {DistanceSlider} from "./DistanceSlider.tsx";
@@ -6,6 +6,7 @@ import {GenderSelect} from "./GenderSelect.tsx";
 import {useGetMyProfileQuery, useUpdateProfilePreferencesMutation} from "../../store/api.ts";
 
 export const PreferencesForm = () => {
+    console.log("PreferencesForm rendered");
     const {data: myProfile, isLoading} = useGetMyProfileQuery();
     const [updateProfilePreferences] = useUpdateProfilePreferencesMutation();
 
@@ -22,11 +23,20 @@ export const PreferencesForm = () => {
         }
     }, [myProfile]);
 
-    if (isLoading || !myProfile) {
-        return <div>Loading profile...</div>;
-    }
+    const handleAgeRangeChange = useCallback((newRange: [number, number]) => {
+        setAgeRange(newRange);
+    }, []);
 
-    const handleSubmit = () => {
+    const handleDistanceChange = useCallback((newDistance: number) => {
+        setDistance(newDistance);
+    }, []);
+
+    const handleGenderChange = useCallback((newGender: string) => {
+        setSelectedGender(Number(newGender));
+    }, []);
+
+    const handleSubmit = useCallback(() => {
+        if (!myProfile) return;
         updateProfilePreferences({
             profileId: myProfile.id,
             minAge: ageRange[0],
@@ -34,21 +44,26 @@ export const PreferencesForm = () => {
             maxDistance: distance,
             preferredGender: selectedGender
         });
-    };
+    }, [myProfile, ageRange, distance, selectedGender, updateProfilePreferences]);
+
+    if (isLoading || !myProfile) {
+        return <div>Loading profile...</div>;
+    }
+
     return (
         <Box sx={{padding: 3, maxWidth: 400, margin: 'auto'}}>
             <AgeRangeSlider
                 minAge={ageRange[0]}
                 maxAge={ageRange[1]}
-                onChange={(newRange) => setAgeRange(newRange)}
+                onChange={handleAgeRangeChange}
             />
             <DistanceSlider
                 maxDistance={distance}
-                onChange={(newDistance) => setDistance(newDistance)}
+                onChange={handleDistanceChange}
             />
             <GenderSelect
                 gender={selectedGender.toString()}
-                onChange={(newGender) => setSelectedGender(Number(newGender))}
+                onChange={handleGenderChange}
             />
             <Button
                 variant="contained"
