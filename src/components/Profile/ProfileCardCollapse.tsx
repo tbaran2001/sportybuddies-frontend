@@ -1,24 +1,24 @@
 import {Button, CardContent, TextField, Typography} from "@mui/material";
 import {useState} from "react";
-import {useGetMyProfileQuery, useUpdateProfilePartialMutation} from "../../store/api.ts";
+import {useUpdateProfilePartialMutation} from "../../store/api.ts";
+import type {Profile} from "../../models/profile.ts";
 
-export const ProfileCardCollapse = () => {
-    const {data: myProfile, isLoading: isLoadingProfile} = useGetMyProfileQuery();
+interface ProfileCardCollapseProps {
+    profile: Profile;
+}
+
+export const ProfileCardCollapse = ({profile}: ProfileCardCollapseProps) => {
     const [updateProfilePartial, {isLoading: isLoadingUpdate}] = useUpdateProfilePartialMutation();
 
     const [isEditing, setIsEditing] = useState(false);
-    const [editedDescription, setEditedDescription] = useState(myProfile?.description || '');
-
-    if (!myProfile || isLoadingProfile) {
-        return <div>Loading profile...</div>;
-    }
+    const [editedDescription, setEditedDescription] = useState(profile.description || '');
 
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
     const handleSaveClick = async () => {
-        updateProfilePartial({profileId: myProfile.id, description: editedDescription});
+        updateProfilePartial({profileId: profile.id, description: editedDescription});
         setIsEditing(false);
     };
 

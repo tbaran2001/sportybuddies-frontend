@@ -1,9 +1,12 @@
-import {Box, CardHeader, IconButton, Typography } from "@mui/material";
+import {Box, CardHeader, IconButton, Typography} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {useGetMyProfileQuery} from "../../store/api.ts";
+import type {Profile} from "../../models/profile.ts";
 
-export const ProfileCardHeader = () => {
-    const {data: myProfile, isLoading} = useGetMyProfileQuery();
+interface ProfileCardHeaderProps {
+    profile: Profile;
+}
+
+export const ProfileCardHeader = ({profile}: ProfileCardHeaderProps) => {
 
     const calculateAge = (dateOfBirth: string) => {
         const dob = new Date(dateOfBirth);
@@ -18,10 +21,6 @@ export const ProfileCardHeader = () => {
         return age;
     };
 
-    if (isLoading || !myProfile) {
-        return <CardHeader title="Loading profile..." />;
-    }
-
     return (
         <CardHeader
             action={(
@@ -31,13 +30,13 @@ export const ProfileCardHeader = () => {
             )}
             title={
                 <Typography variant="h6">
-                    {myProfile.name}, {calculateAge(myProfile.dateOfBirth)}l
+                    {profile.name}, {calculateAge(profile.dateOfBirth)}l
                 </Typography>
             }
             subheader={
                 <Box>
                     <Typography variant="subtitle1">
-                        {myProfile.location?.address && <span>{myProfile.location.address} </span>}
+                        {profile.location?.address && <span>{profile.location.address} </span>}
                     </Typography>
                 </Box>
             }

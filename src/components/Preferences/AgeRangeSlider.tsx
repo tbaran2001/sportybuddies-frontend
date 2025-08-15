@@ -39,7 +39,6 @@ const normalizeRange = (value: [number, number], changedIndex?: number): [number
 };
 
 const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
-    console.log("AgeRangeSlider rendered");
     const value: [number, number] = [minAge, maxAge];
 
     const handleSliderChange = useCallback((_event: Event, newValue: number | number[]) => {

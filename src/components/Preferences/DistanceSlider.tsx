@@ -18,8 +18,6 @@ const marks = [
 ];
 
 const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
-
-    console.log("DistanceSlider rendered");
     const value = maxDistance;
 
     const handleSliderChange = useCallback((_event: Event, newValue: number | number[]) => {

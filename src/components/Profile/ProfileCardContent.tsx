@@ -1,17 +1,17 @@
 import {Box, CardContent, Tooltip} from "@mui/material";
 import {sportsIcons} from "../../utils/sportsIcons";
+import type {Profile} from "../../models/profile.ts";
 
-const profileSports = [
-    {id: 1, name: 'Gym'},
-    {id: 2, name: 'Boxing'},
-    {id: 3, name: 'Surfing'},
-];
+interface ProfileCardContentProps {
+    profile: Profile;
+}
 
-export const ProfileCardContent = () => {
+export const ProfileCardContent = ({profile}: ProfileCardContentProps) => {
+
     return (
         <CardContent>
             <Box display="flex" justifyContent="center">
-                {profileSports.map(({id, name}) => (
+                {profile.sports.map(({id, name}) => (
                     <Tooltip key={id} title={name} arrow>
                         <Box component={sportsIcons[name] || sportsIcons['default']}/>
                     </Tooltip>

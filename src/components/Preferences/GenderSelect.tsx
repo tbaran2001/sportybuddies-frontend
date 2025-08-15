@@ -8,7 +8,6 @@ interface GenderSelectProps {
 }
 
 const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
-    console.log("GenderSelect rendered");
     const handleChange = useCallback((event: SelectChangeEvent) => {
         onChange(event.target.value);
     }, [onChange]);
@@ -24,7 +23,7 @@ const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
                     onChange={handleChange}
                     label="Gender"
                 >
-                    <MenuItem value="3">All</MenuItem>
+                    <MenuItem value="0">All</MenuItem>
                     <MenuItem value="1">Male</MenuItem>
                     <MenuItem value="2">Female</MenuItem>
                 </Select>
