@@ -1,4 +1,3 @@
-import {useState} from "react";
 import {Box, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import type {SelectChangeEvent} from "@mui/material";
 
@@ -8,10 +7,7 @@ interface GenderSelectProps {
 }
 
 export const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
-    const [value, setValue] = useState(gender);
-
     const handleChange = (event: SelectChangeEvent) => {
-        setValue(event.target.value);
         onChange(event.target.value);
     };
 
@@ -22,13 +18,13 @@ export const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
                 <InputLabel id="gender-select-label">Gender</InputLabel>
                 <Select
                     labelId="gender-select-label"
-                    value={value}
+                    value={gender}
                     onChange={handleChange}
                     label="Gender"
                 >
-                    <MenuItem value={3}>All</MenuItem>
-                    <MenuItem value={1}>Male</MenuItem>
-                    <MenuItem value={2}>Female</MenuItem>
+                    <MenuItem value="3">All</MenuItem>
+                    <MenuItem value="1">Male</MenuItem>
+                    <MenuItem value="2">Female</MenuItem>
                 </Select>
             </FormControl>
         </Box>

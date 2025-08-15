@@ -1,4 +1,4 @@
-import {useState, type ChangeEvent} from "react";
+import {type ChangeEvent} from "react";
 import {Box, Slider, TextField, Typography} from "@mui/material";
 
 interface DistanceSliderProps {
@@ -18,11 +18,10 @@ const marks = [
 ];
 
 export const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
-    const [value, setValue] = useState(maxDistance);
+    const value = maxDistance;
 
     const handleSliderChange = (_event: Event, newValue: number | number[]) => {
         const numValue = Array.isArray(newValue) ? newValue[0] : newValue;
-        setValue(numValue);
         onChange(numValue);
     };
 
@@ -30,14 +29,14 @@ export const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => 
         let newValue = Number(event.target.value);
         if (newValue < 1) newValue = 1;
         if (newValue > 100) newValue = 100;
-        setValue(newValue);
         onChange(newValue);
     };
 
     const handleBlur = () => {
-        if (value < 1) setValue(1);
-        if (value > 100) setValue(100);
-        onChange(value);
+        let newValue = value;
+        if (newValue < 1) newValue = 1;
+        if (newValue > 100) newValue = 100;
+        onChange(newValue);
     };
 
     return (

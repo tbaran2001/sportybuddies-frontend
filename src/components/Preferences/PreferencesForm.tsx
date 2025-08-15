@@ -15,7 +15,7 @@ export const PreferencesForm = () => {
 
     useEffect(() => {
         if (myProfile?.preferences) {
-            const {minAge = 18, maxAge = 100, maxDistance = 50, preferredGender = 3} = myProfile.preferences;
+            const {minAge, maxAge, maxDistance, preferredGender} = myProfile.preferences;
             setAgeRange([minAge, maxAge]);
             setDistance(maxDistance);
             setSelectedGender(preferredGender);
