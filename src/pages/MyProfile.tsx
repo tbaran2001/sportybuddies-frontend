@@ -5,6 +5,9 @@ import {
     useGetSportsQuery,
     useRemoveProfileSportMutation
 } from "../store/api.ts";
+import {Stack} from "@mui/material";
+import {ProfileCard} from "../components/Profile/ProfileCard.tsx";
+import {Preferences} from "../components/Preferences/Preferences.tsx";
 
 const MyProfilePage = () => {
     const {data: profile, isLoading, isError, error} = useGetMyProfileQuery();
@@ -40,7 +43,9 @@ const MyProfilePage = () => {
     const profileSportIds = new Set(profile.sports.map(s => s.id));
 
     return (
-        <div>
+        <Stack>
+            <ProfileCard/>
+            <Preferences/>
             <h1>My Profile</h1>
             <p>I am {profile.name} with id: {profile.id}</p>
             <h1>My sports ({profile.sports.length}):</h1>
@@ -60,7 +65,7 @@ const MyProfilePage = () => {
                     </button>
                 </div>
             ))}
-        </div>
+        </Stack>
     );
 }
 

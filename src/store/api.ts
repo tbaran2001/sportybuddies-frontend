@@ -96,6 +96,34 @@ export const api = createApi({
             }),
             invalidatesTags: ['MyProfile'],
         }),
+        updateProfilePartial: builder.mutation<void, {
+            profileId: string;
+            name?: string;
+            description?: string;
+            gender?: number;
+            dateOfBirth?: string;
+        }>({
+            query: ({profileId, ...body}) => ({
+                url: `profiles/${profileId}`,
+                method: 'PATCH',
+                body,
+            }),
+            invalidatesTags: ['MyProfile'],
+        }),
+        updateProfilePreferences: builder.mutation<void, {
+            profileId: string;
+            minAge: number;
+            maxAge: number;
+            maxDistance: number;
+            preferredGender: number;
+        }>({
+            query: ({profileId, ...body}) => ({
+                url: `profiles/${profileId}/preferences`,
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: ['MyProfile'],
+        }),
     }),
 });
 
@@ -108,4 +136,6 @@ export const {
     useAddProfileSportMutation,
     useRemoveProfileSportMutation,
     useUpdateProfileMutation,
+    useUpdateProfilePartialMutation,
+    useUpdateProfilePreferencesMutation,
 } = api;
