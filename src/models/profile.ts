@@ -40,3 +40,12 @@ export interface Match {
     swipeDateTime: string | null;
     distance: number;
 }
+
+export interface Buddy {
+    id: string;
+    oppositeBuddyId: string;
+    profileId: string;
+    matchedProfile: Profile;
+    createdOn: string;
+    conversationId: string | null;
+}

@@ -16,6 +16,7 @@ import MyProfilePage from "./pages/MyProfile.tsx";
 import ProtectedLayout from "./pages/ProtectedLayout.tsx";
 import {logoutLoader} from "./pages/Logout.tsx";
 import {MatchingPage} from "./pages/Matching.tsx";
+import {BuddiesPage} from "./pages/Buddies.tsx";
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
                     <Route path="profiles/me" element={<MyProfilePage/>}/>
                     <Route path="profiles/:profileId/edit" element={<EditProfilePage/>}/>
                     <Route path="matching" element={<MatchingPage/>}/>
+                    <Route path="buddies" element={<BuddiesPage/>}/>
                 </Route>
             </Route>
         )

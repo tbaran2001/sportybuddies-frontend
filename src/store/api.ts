@@ -1,5 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import type {Match, Profile, Sport} from '../models/profile.ts';
+import type {Buddy, Match, Profile, Sport} from '../models/profile.ts';
 import type {RootState} from "./store.ts";
 import type {BaseQueryFn} from '@reduxjs/toolkit/query';
 
@@ -52,7 +52,7 @@ const baseQueryWithLogging: BaseQueryFn = async (args, api, extraOptions) => {
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithLogging,
-    tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch'],
+    tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch', 'Buddies'],
     endpoints: (builder) => ({
         login: builder.mutation<string, string>({
             query: (email) => ({
@@ -150,7 +150,11 @@ export const api = createApi({
                 body: {swipe},
             }),
             invalidatesTags: ['RandomMatch'],
-        })
+        }),
+        getProfileBuddies: builder.query<Buddy[], string>({
+            query: (profileId) => `buddies/GetProfileBuddies/${profileId}`,
+            transformResponse: (response: { buddies: Buddy[] }) => response.buddies,
+        }),
     }),
 });
 
@@ -166,5 +170,6 @@ export const {
     useUpdateProfilePartialMutation,
     useUpdateProfilePreferencesMutation,
     useGetRandomMatchQuery,
-    useUpdateMatchSwipeMutation
+    useUpdateMatchSwipeMutation,
+    useGetProfileBuddiesQuery
 } = api;
