@@ -15,16 +15,12 @@ export const ProfileCardCollapse = ({profile, readOnly = false}: ProfileCardColl
     const [editedDescription, setEditedDescription] = useState(profile.description || '');
 
     const handleEditClick = () => {
-        if (!readOnly) {
-            setIsEditing(true);
-        }
+        setIsEditing(true);
     };
 
     const handleSaveClick = async () => {
-        if (!readOnly) {
-            updateProfilePartial({profileId: profile.id, description: editedDescription});
-            setIsEditing(false);
-        }
+        updateProfilePartial({profileId: profile.id, description: editedDescription});
+        setIsEditing(false);
     };
 
     return (
