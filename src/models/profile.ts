@@ -49,3 +49,16 @@ export interface Buddy {
     createdOn: string;
     conversationId: string | null;
 }
+
+export interface Conversation {
+    id: string;
+    creatorId: string;
+    participants: Participant[];
+}
+
+export interface Participant {
+    id: string;
+    conversationId: string;
+    profile: Profile;
+    createdOn: string;
+}

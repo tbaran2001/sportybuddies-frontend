@@ -44,6 +44,11 @@ const MainNavigation = () => {
                                 </NavLink>
                             </li>
                             <li>
+                                <NavLink to='/chat' className={({isActive}) => isActive ? 'active' : undefined}>
+                                    Chat
+                                </NavLink>
+                            </li>
+                            <li>
                                 <NavLink to='/logout' className={({isActive}) => isActive ? 'active' : undefined}>
                                     Logout
                                 </NavLink>

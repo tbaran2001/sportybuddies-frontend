@@ -1,6 +1,7 @@
 import {Button, ListItem, ListItemAvatar, ListItemText, styled, Typography, useTheme} from "@mui/material";
 import type {Buddy} from "../../models/profile.ts";
 import {useNavigate} from "react-router-dom";
+import {useCreateConversationMutation} from "../../store/api.ts";
 
 const StyledButton = styled(Button)(({theme}) => ({
     borderRadius: theme.spacing(3),
@@ -25,31 +26,27 @@ interface BuddyItemProps {
 export const BuddyItem = ({buddy}: BuddyItemProps) => {
     const theme = useTheme();
     const navigate = useNavigate();
+    const [createConversation,{data:newConversation}] = useCreateConversationMutation();
 
     const handleButtonClick = async () => {
-        try {
-            let conversationId = buddy.conversationId;
+        let conversationId = buddy.conversationId;
 
-            if (!conversationId) {
-                const newConversation = "123";
-                if(!newConversation) {
-                    console.error("Failed to create conversation");
-                    window.location.reload();
-                    return;
-                }
-                conversationId = "newConversation.id;"
-            }
-
-            if (!conversationId) {
-                console.error("Invalid conversation ID");
-                navigate("/ProfilePage");
+        if (!conversationId) {
+            createConversation({profileId: buddy.profileId, participantId: buddy.matchedProfile.id});
+            if (!newConversation) {
+                console.error("Failed to create conversation");
+                window.location.reload();
                 return;
             }
-
-            navigate(`/ChatPage/${conversationId}`);
-        } catch (error) {
-            console.error("Failed to create or navigate to conversation:", error);
+            conversationId = newConversation.id;
         }
+
+        if (!conversationId) {
+            console.error("Invalid conversation ID");
+            navigate("/");
+        }
+
+        navigate(`/chat/${conversationId}`);
     };
 
     return (
@@ -85,7 +82,7 @@ export const BuddyItem = ({buddy}: BuddyItemProps) => {
             <StyledButton
                 variant="contained"
                 color="primary"
-                startIcon={<i className="fas fa-comments" />}
+                startIcon={<i className="fas fa-comments"/>}
                 onClick={handleButtonClick}
                 aria-label={`Start or go to conversation with ${buddy.matchedProfile.name}`}
             >

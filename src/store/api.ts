@@ -1,5 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import type {Buddy, Match, Profile, Sport} from '../models/profile.ts';
+import type {Buddy, Match, Profile, Sport, Conversation} from '../models/profile.ts';
 import type {RootState} from "./store.ts";
 import type {BaseQueryFn} from '@reduxjs/toolkit/query';
 
@@ -155,6 +155,14 @@ export const api = createApi({
             query: (profileId) => `buddies/GetProfileBuddies/${profileId}`,
             transformResponse: (response: { buddies: Buddy[] }) => response.buddies,
         }),
+        createConversation: builder.mutation<Conversation, { profileId: string; participantId: string }>({
+            query: ({profileId, participantId}) => ({
+                url: `conversations`,
+                method: 'POST',
+                body: {profileId, participantId},
+            }),
+            transformResponse: (response: { conversation: Conversation }) => response.conversation,
+        })
     }),
 });
 
@@ -171,5 +179,6 @@ export const {
     useUpdateProfilePreferencesMutation,
     useGetRandomMatchQuery,
     useUpdateMatchSwipeMutation,
-    useGetProfileBuddiesQuery
+    useGetProfileBuddiesQuery,
+    useCreateConversationMutation
 } = api;

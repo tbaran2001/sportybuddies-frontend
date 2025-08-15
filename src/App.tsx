@@ -17,6 +17,7 @@ import ProtectedLayout from "./pages/ProtectedLayout.tsx";
 import {logoutLoader} from "./pages/Logout.tsx";
 import {MatchingPage} from "./pages/Matching.tsx";
 import {BuddiesPage} from "./pages/Buddies.tsx";
+import {ChatPage} from "./pages/Chat.tsx";
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
                     <Route path="profiles/:profileId/edit" element={<EditProfilePage/>}/>
                     <Route path="matching" element={<MatchingPage/>}/>
                     <Route path="buddies" element={<BuddiesPage/>}/>
+                    <Route path="chat" element={<ChatPage/>}/>
                 </Route>
             </Route>
         )
