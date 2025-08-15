@@ -8,6 +8,7 @@ const StyledPaper = styled(Paper)(() => ({
 }));
 
 export const ChatPage = () => {
+
     return (
         <Box flex={4}>
             <StyledPaper elevation={10}>

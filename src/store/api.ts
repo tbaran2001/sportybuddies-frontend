@@ -1,5 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import type {Buddy, Match, Profile, Sport, Conversation} from '../models/profile.ts';
+import type {Buddy, Match, Profile, Sport, Conversation, Message} from '../models/profile.ts';
 import type {RootState} from "./store.ts";
 import type {BaseQueryFn} from '@reduxjs/toolkit/query';
 
@@ -162,7 +162,15 @@ export const api = createApi({
                 body: {profileId, participantId},
             }),
             transformResponse: (response: { conversation: Conversation }) => response.conversation,
-        })
+        }),
+        getConversation: builder.query<Conversation, string>({
+            query: (conversationId) => `conversations/${conversationId}`,
+            transformResponse: (response: { conversation: Conversation }) => response.conversation,
+        }),
+        getConversationMessages: builder.query <Message[], string>({
+            query: (conversationId) => `conversations/${conversationId}/messages`,
+            transformResponse: (response: { messages: Message[] }) => response.messages,
+        }),
     }),
 });
 
