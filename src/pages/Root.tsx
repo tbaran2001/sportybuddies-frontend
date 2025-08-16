@@ -1,16 +1,20 @@
 import {Outlet} from "react-router-dom";
-import MainNavigation from "../components/MainNavigation.tsx";
+import {MainNavigation} from "../components/Navigation/MainNavigation.tsx";
+import {Box, Container} from "@mui/material";
 
 const RootLayout = () => {
-    //const navigation = useNavigation();
     return (
-        <>
+        <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
             <MainNavigation/>
-            <main>
-                {/*{navigation.state === 'loading' && <p>Loading...</p>}*/}
+            <Container component="main" sx={{
+                flexGrow: 1,
+                py: 4,
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
                 <Outlet/>
-            </main>
-        </>
+            </Container>
+        </Box>
     )
 }
 

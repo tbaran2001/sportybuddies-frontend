@@ -1,6 +1,6 @@
 import PageContent from "../components/PageContent.tsx";
 import {isRouteErrorResponse, useRouteError} from "react-router-dom";
-import MainNavigation from "../components/MainNavigation.tsx";
+import {MainNavigation} from "../components/Navigation/MainNavigation.tsx";
 
 interface ErrorData {
     message: string;
