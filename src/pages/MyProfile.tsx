@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {
     Container,
     Box,
@@ -6,7 +5,6 @@ import {
     CircularProgress,
     Alert,
     Stack,
-    Snackbar,
     styled
 } from '@mui/material';
 import PageContent from '../components/PageContent';
@@ -14,16 +12,9 @@ import PhotoCarousel from '../components/MyProfile/PhotoCarousel';
 import ProfileInfo from '../components/MyProfile/ProfileInfo';
 import BioSection from '../components/MyProfile/BioSection';
 import SportsList from '../components/MyProfile/SportsList';
-import {
-    useGetMyProfileQuery,
-    useGetSportsQuery,
-    useUpdateProfilePartialMutation,
-    useAddProfileSportMutation,
-    useRemoveProfileSportMutation
-} from '../store/api';
-import type {Sport} from '../models/profile.ts';
-import {getRandomSportsPhotos} from '../utils/samplePhotos';
 import {Preferences} from "../components/Preferences/Preferences.tsx";
+import {useMyProfilePage} from '../hooks/useMyProfilePage';
+import {NotificationSnackbar} from '../components/common/NotificationSnackbar';
 
 const ProfileContainer = styled(Box)(({theme}) => ({
     marginTop: theme.spacing(2),
@@ -31,103 +22,21 @@ const ProfileContainer = styled(Box)(({theme}) => ({
 }));
 
 const MyProfilePage = () => {
-    const [notification, setNotification] = useState<{
-        open: boolean;
-        message: string;
-        severity: 'success' | 'error' | 'info';
-    }>({
-        open: false,
-        message: '',
-        severity: 'info'
-    });
-
     const {
-        data: profile,
-        isLoading: profileLoading,
-        error: profileError
-    } = useGetMyProfileQuery();
+        profile,
+        sportsData,
+        displayPhotos,
+        isLoading,
+        profileError,
+        sportsError,
+        saving,
+        handleBioUpdate,
+        handleSportToggle,
+        notification,
+        handleCloseNotification,
+    } = useMyProfilePage();
 
-    const {
-        data: sportsData,
-        isLoading: sportsLoading,
-        error: sportsError
-    } = useGetSportsQuery();
-
-    const [updateProfile, {isLoading: isUpdating}] = useUpdateProfilePartialMutation();
-    const [addSport, {isLoading: isAddingSport}] = useAddProfileSportMutation();
-    const [removeSport, {isLoading: isRemovingSport}] = useRemoveProfileSportMutation();
-
-    const displayPhotos = getRandomSportsPhotos(3);
-
-    const handleBioUpdate = async (newBio: string) => {
-        if (profile) {
-            try {
-                await updateProfile({
-                    profileId: profile.id,
-                    description: newBio
-                }).unwrap();
-
-                setNotification({
-                    open: true,
-                    message: 'Bio updated successfully!',
-                    severity: 'success'
-                });
-            } catch (error) {
-                console.error('Failed to update bio:', error);
-                setNotification({
-                    open: true,
-                    message: 'Failed to update bio. Please try again.',
-                    severity: 'error'
-                });
-            }
-        }
-    };
-
-    const handleSportToggle = async (sport: Sport, isSelected: boolean) => {
-        if (!profile) return;
-
-        try {
-            if (isSelected) {
-                await addSport({
-                    profileId: profile.id,
-                    sportId: sport.id
-                }).unwrap();
-
-                setNotification({
-                    open: true,
-                    message: `Added ${sport.name} to your sports!`,
-                    severity: 'success'
-                });
-            } else {
-                await removeSport({
-                    profileId: profile.id,
-                    sportId: sport.id
-                }).unwrap();
-
-                setNotification({
-                    open: true,
-                    message: `Removed ${sport.name} from your sports!`,
-                    severity: 'info'
-                });
-            }
-        } catch (error) {
-            console.error('Failed to update sports:', error);
-            setNotification({
-                open: true,
-                message: 'Failed to update sports. Please try again.',
-                severity: 'error'
-            });
-        }
-    };
-
-    const handleCloseNotification = () => {
-        setNotification({
-            ...notification,
-            open: false
-        });
-    };
-
-    if (profileLoading || sportsLoading) {
+    if (isLoading) {
         return (
             <PageContent title="My Profile">
                 <Box display="flex" justifyContent="center" my={4}>
@@ -181,7 +90,7 @@ const MyProfilePage = () => {
 
                     <Preferences/>
 
-                    {(isUpdating || isAddingSport || isRemovingSport) && (
+                    {saving && (
                         <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" mt={2}>
                             <CircularProgress size={20}/>
                             <Typography variant="body2" color="text.secondary">
@@ -192,20 +101,12 @@ const MyProfilePage = () => {
                 </ProfileContainer>
             </Container>
 
-            <Snackbar
+            <NotificationSnackbar
                 open={notification.open}
-                autoHideDuration={6000}
+                message={notification.message}
+                severity={notification.severity}
                 onClose={handleCloseNotification}
-                anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-            >
-                <Alert
-                    onClose={handleCloseNotification}
-                    severity={notification.severity}
-                    sx={{width: '100%'}}
-                >
-                    {notification.message}
-                </Alert>
-            </Snackbar>
+            />
         </PageContent>
     );
 };
