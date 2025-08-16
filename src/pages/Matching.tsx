@@ -7,10 +7,10 @@ import {
 } from '@mui/material';
 import PageContent from '../components/PageContent';
 import PhotoCarousel from '../components/MyProfile/PhotoCarousel';
-import MatchCardContainer from '../components/matching/MatchCardContainer';
-import MatchHeader from '../components/matching/MatchHeader';
-import MatchDetails from '../components/matching/MatchDetails';
-import SwipeButtons from '../components/matching/SwipeButtons';
+import MatchCardContainer from '../components/Matching/MatchCardContainer';
+import MatchHeader from '../components/Matching/MatchHeader';
+import MatchDetails from '../components/Matching/MatchDetails';
+import SwipeButtons from '../components/Matching/SwipeButtons';
 import {useGetMyProfileQuery, useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from '../store/api';
 import {getRandomSportsPhotos} from '../utils/samplePhotos';
 import {calculateAge} from '../utils/profileUtils';
