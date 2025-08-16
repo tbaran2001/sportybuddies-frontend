@@ -1,6 +1,10 @@
 import {Box, Typography} from "@mui/material";
 
-export const ChatHeader = () => {
+interface ChatHeaderProps {
+    participantName: string;
+}
+
+export const ChatHeader = ({participantName}:ChatHeaderProps) => {
     return (
         <Box
             sx={{
@@ -13,7 +17,7 @@ export const ChatHeader = () => {
         >
             <img
                 src="/default-avatar.png" // Replace with dynamic source if needed
-                alt={"participantName"}
+                alt={participantName}
                 style={{
                     width: 48,
                     height: 48,
@@ -23,7 +27,7 @@ export const ChatHeader = () => {
             />
             <Box sx={{ml: 2}}>
                 <Typography variant="subtitle1" fontWeight="medium">
-                    {"participantName"}
+                    {participantName}
                 </Typography>
             </Box>
         </Box>

@@ -52,7 +52,7 @@ const baseQueryWithLogging: BaseQueryFn = async (args, api, extraOptions) => {
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithLogging,
-    tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch', 'Buddies'],
+    tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch', 'Buddies','Messages'],
     endpoints: (builder) => ({
         login: builder.mutation<string, string>({
             query: (email) => ({
@@ -170,7 +170,17 @@ export const api = createApi({
         getConversationMessages: builder.query <Message[], string>({
             query: (conversationId) => `conversations/${conversationId}/messages`,
             transformResponse: (response: { messages: Message[] }) => response.messages,
+            providesTags: ['Messages']
         }),
+        sendMessage: builder.mutation<Message, { conversationId: string; profileId: string; content: string }>({
+            query: ({conversationId, profileId, content}) => ({
+                url: `conversations/${conversationId}/messages`,
+                method: 'POST',
+                body: {profileId, content},
+            }),
+            transformResponse: (response: { message: Message }) => response.message,
+            invalidatesTags: ['Messages'],
+        })
     }),
 });
 
@@ -188,5 +198,8 @@ export const {
     useGetRandomMatchQuery,
     useUpdateMatchSwipeMutation,
     useGetProfileBuddiesQuery,
-    useCreateConversationMutation
+    useCreateConversationMutation,
+    useGetConversationQuery,
+    useGetConversationMessagesQuery,
+    useSendMessageMutation
 } = api;

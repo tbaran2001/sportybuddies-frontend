@@ -67,7 +67,7 @@ const EditProfilePage = () => {
     return (
         <div>
             <h1>Edit Profile</h1>
-            {error && (
+            {!!error && (
                 <div style={{color: 'red', marginBottom: '1rem'}}>
                     Error updating profile. Please try again.
                 </div>
