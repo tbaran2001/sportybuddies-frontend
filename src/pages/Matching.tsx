@@ -1,75 +1,116 @@
-import {Box, IconButton, Stack, styled, CircularProgress} from "@mui/material";
-import {FavoriteBorderOutlined, ThumbDownOutlined} from '@mui/icons-material';
-import {useGetMyProfileQuery, useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from "../store/api.ts";
-import { useEffect } from "react";
-import {MatchProfileCard} from "../components/Matching/MatchProfileCard.tsx";
-
-const SwipeBox = styled(Box)(() => ({
-    flex: "1",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-}));
+import {useState, useEffect} from 'react';
+import {
+    Box,
+    Container,
+    CircularProgress,
+    Alert,
+} from '@mui/material';
+import PageContent from '../components/PageContent';
+import PhotoCarousel from '../components/MyProfile/PhotoCarousel';
+import MatchCardContainer from '../components/matching/MatchCardContainer';
+import MatchHeader from '../components/matching/MatchHeader';
+import MatchDetails from '../components/matching/MatchDetails';
+import SwipeButtons from '../components/matching/SwipeButtons';
+import {useGetMyProfileQuery, useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from '../store/api';
+import {getRandomSportsPhotos} from '../utils/samplePhotos';
+import {calculateAge} from '../utils/profileUtils';
 
 export const MatchingPage = () => {
-    const {data: myProfile} = useGetMyProfileQuery();
-    const {
-        data: randomMatch,
-        isLoading: isLoadingRandomMatch,
-        refetch
-    } = useGetRandomMatchQuery(myProfile?.id || "", {skip: !myProfile});
-    const [updateMatch] = useUpdateMatchSwipeMutation();
+    const [expanded, setExpanded] = useState(false);
+    const [currentPhotos, setCurrentPhotos] = useState<string[]>([]);
+
+    const {data: myProfile, isLoading: profileLoading} = useGetMyProfileQuery();
+    const {data: match, isLoading: matchLoading, refetch: refetchMatch} =
+        useGetRandomMatchQuery(myProfile?.id || '', {skip: !myProfile?.id});
+
+    const [updateSwipe, {isLoading: isUpdatingSwipe}] = useUpdateMatchSwipeMutation();
 
     useEffect(() => {
-        if (myProfile && !randomMatch) {
-            refetch();
+        if (match?.matchedProfile) {
+            const photos: string[] = [];
+            if (match.matchedProfile.mainPhotoUrl) {
+                photos.push(match.matchedProfile.mainPhotoUrl);
+            }
+            const randomPhotos = getRandomSportsPhotos(match.matchedProfile.mainPhotoUrl ? 2 : 3);
+            setCurrentPhotos([...photos, ...randomPhotos]);
         }
-    }, [myProfile, randomMatch, refetch]);
+    }, [match]);
 
-    if (isLoadingRandomMatch) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                <CircularProgress/>
-            </Box>
-        );
-    }
-
-    if (!randomMatch) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                No matches available.
-            </Box>
-        );
-    }
-
-    const swipe = async (direction: number) => {
-        await updateMatch({matchId: randomMatch.id, swipe: direction});
+    const handleSwipe = async (swipeValue: number) => {
+        if (match?.id) {
+            try {
+                await updateSwipe({matchId: match.id, swipe: swipeValue}).unwrap();
+                refetchMatch();
+                setExpanded(false);
+            } catch (error) {
+                console.error('Failed to update swipe:', error);
+            }
+        }
     };
 
+    const toggleExpanded = () => {
+        setExpanded(!expanded);
+    };
+
+    if (profileLoading || matchLoading) {
+        return (
+            <PageContent title="Find Buddies">
+                <Box display="flex" justifyContent="center" my={4}>
+                    <CircularProgress/>
+                </Box>
+            </PageContent>
+        );
+    }
+
+    if (!match) {
+        return (
+            <PageContent title="Find Buddies">
+                <Container maxWidth="sm">
+                    <Alert severity="info" sx={{mt: 2}}>
+                        No more potential matches available right now. Check back later!
+                    </Alert>
+                </Container>
+            </PageContent>
+        );
+    }
+
+    const {matchedProfile} = match;
+    const age = calculateAge(matchedProfile.dateOfBirth);
 
     return (
-        <Stack flex={4} direction="row" spacing={2} justifyContent={"space-between"}>
-            <SwipeBox>
-                <IconButton
-                    onClick={() => swipe(2)}
-                    aria-label="Swipe Left"
-                    size="large"
-                >
-                    <ThumbDownOutlined fontSize="large"/>
-                </IconButton>
-            </SwipeBox>
-            <Box display="flex" justifyContent="center" alignItems="center" position="relative">
-                <MatchProfileCard/>
-            </Box>
-            <SwipeBox>
-                <IconButton
-                    onClick={() => swipe(1)}
-                    aria-label="Swipe Right"
-                    size="large"
-                >
-                    <FavoriteBorderOutlined fontSize="large"/>
-                </IconButton>
-            </SwipeBox>
-        </Stack>
+        <PageContent title="Find Buddies">
+            <Container maxWidth="md">
+                <MatchCardContainer>
+                    <PhotoCarousel photos={currentPhotos}/>
+
+                    <MatchHeader
+                        name={matchedProfile.name}
+                        age={age}
+                        distanceMiles={Math.round(match.distance)}
+                        showLocation={!!matchedProfile.location}
+                        expanded={expanded}
+                        onToggle={toggleExpanded}
+                    />
+
+                    <MatchDetails
+                        expanded={expanded}
+                        description={matchedProfile.description}
+                        sports={matchedProfile.sports}
+                    />
+                </MatchCardContainer>
+
+                <SwipeButtons
+                    onDislike={() => handleSwipe(2)}
+                    onLike={() => handleSwipe(1)}
+                    disabled={isUpdatingSwipe}
+                />
+
+                {isUpdatingSwipe && (
+                    <Box display="flex" justifyContent="center" mt={2}>
+                        <CircularProgress size={24}/>
+                    </Box>
+                )}
+            </Container>
+        </PageContent>
     );
 };
