@@ -1,40 +1,109 @@
-import {Box, Typography, List, Paper} from "@mui/material";
-import {useGetMyProfileQuery, useGetProfileBuddiesQuery} from "../store/api.ts";
-import {BuddyItem} from "../components/Buddies/BuddyItem.tsx";
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {
+    Container,
+    Typography,
+    Box,
+    Grid,
+    CircularProgress,
+    Alert,
+} from '@mui/material';
+import PageContent from '../components/PageContent';
+import {useGetMyProfileQuery, useGetProfileBuddiesQuery, useCreateConversationMutation} from '../store/api';
+import type {Buddy} from '../models/profile.ts';
+import BuddyCard from '../components/Buddies/BuddyCard';
+import EmptyBuddiesState from '../components/Buddies/EmptyBuddiesState';
 
 export const BuddiesPage = () => {
-    const {data: myProfile} = useGetMyProfileQuery();
+    const navigate = useNavigate();
+    const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+    const {
+        data: myProfile,
+        isLoading: profileLoading,
+        error: profileError
+    } = useGetMyProfileQuery();
     const {
         data: buddies,
-        isLoading: isLoadingBuddies
-    } = useGetProfileBuddiesQuery(myProfile?.id || "", {skip: !myProfile});
+        isLoading: buddiesLoading,
+        error: buddiesError
+    } = useGetProfileBuddiesQuery(myProfile?.id || '', {skip: !myProfile?.id});
 
-    if (isLoadingBuddies || !buddies) {
+    const [createConversation, {isLoading: isCreatingConversation}] = useCreateConversationMutation();
+
+    const handleMessageClick = async (buddy: Buddy) => {
+        try {
+            if (buddy.conversationId) {
+                navigate(`/chat/${buddy.conversationId}`);
+                return;
+            }
+
+            setLoadingStates(prev => ({...prev, [buddy.id]: true}));
+
+            const result = await createConversation({
+                profileId: myProfile!.id,
+                participantId: buddy.matchedProfile.id
+            }).unwrap();
+
+            navigate(`/chat/${result.id}`);
+        } catch (error) {
+            console.error('Failed to create conversation:', error);
+        } finally {
+            setLoadingStates(prev => ({...prev, [buddy.id]: false}));
+        }
+    };
+
+    if (profileLoading || buddiesLoading) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                <Typography variant="h6">Loading your buddies...</Typography>
-            </Box>
+            <PageContent title="My Buddies">
+                <Box display="flex" justifyContent="center" my={4}>
+                    <CircularProgress/>
+                </Box>
+            </PageContent>
+        );
+    }
+
+    if (profileError || buddiesError) {
+        return (
+            <PageContent title="My Buddies">
+                <Alert severity="error" sx={{mt: 2}}>
+                    Failed to load buddies. Please try again later.
+                </Alert>
+            </PageContent>
+        );
+    }
+
+    if (!buddies || buddies.length === 0) {
+        return (
+            <PageContent title="My Buddies">
+                <EmptyBuddiesState onFindMatches={() => navigate('/matching')}/>
+            </PageContent>
         );
     }
 
     return (
-        <Box flex={4}>
-            <Paper>
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                >
-                    Your Buddies
+        <PageContent title="My Buddies">
+            <Container maxWidth="lg">
+                <Typography variant="body1" paragraph>
+                    These are people you've matched with. Start a conversation to get to know them better!
                 </Typography>
-                <List>
-                    {buddies.map((buddy) => (
-                        <BuddyItem
-                            key={buddy.id}
-                            buddy={buddy}
-                        />
-                    ))}
-                </List>
-            </Paper>
-        </Box>
+
+                <Grid container spacing={3}>
+                    {buddies.map((buddy) => {
+                        const isLoading = loadingStates[buddy.id] || isCreatingConversation;
+
+                        return (
+                            <Grid key={buddy.id}>
+                                <BuddyCard
+                                    buddy={buddy}
+                                    isLoading={isLoading}
+                                    onMessage={handleMessageClick}
+                                />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
+            </Container>
+        </PageContent>
     );
 };
