@@ -59,7 +59,7 @@ export const MatchingPage = () => {
                 </IconButton>
             </SwipeBox>
             <Box display="flex" justifyContent="center" alignItems="center" position="relative">
-                <MatchProfileCard profile={randomMatch.matchedProfile} />
+                <MatchProfileCard/>
             </Box>
             <SwipeBox>
                 <IconButton

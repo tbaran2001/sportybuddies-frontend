@@ -48,7 +48,7 @@ const EditProfilePage = () => {
 
             navigate(`/profiles/${profile.id}`);
         } catch (err) {
-            console.error('Failed to update profile:', err);
+            console.error('Failed to update MyProfile:', err);
         }
     };
 
