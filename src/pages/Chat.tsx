@@ -1,126 +1,198 @@
-import {Box, Paper, styled, CircularProgress} from "@mui/material";
-import {ChatHeader} from "../components/Chat/ChatHeader.tsx";
-import {useEffect, useRef, useState} from "react";
-import {useParams, useNavigate} from "react-router-dom";
+import {useState, useEffect} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
 import {
-    useGetConversationMessagesQuery,
-    useGetConversationQuery,
+    Box,
+    Grid,
+    Paper,
+    Typography,
+    CircularProgress,
+    Alert,
+    styled,
+    useTheme,
+    useMediaQuery
+} from '@mui/material';
+import PageContent from '../components/PageContent';
+import ConversationList from '../components/chat/ConversationList';
+import MessageThread from '../components/chat/MessageThread';
+import MessageInput from '../components/chat/MessageInput';
+import {
     useGetMyProfileQuery,
-    useSendMessageMutation
-} from "../store/api.ts";
-import {MessageList} from "../components/Chat/MessageList.tsx";
-import {InputBox} from "../components/Chat/InputBox.tsx";
+    useGetConversationQuery,
+    useGetConversationMessagesQuery,
+    useSendMessageMutation,
+    useGetProfileConversationsQuery
+} from '../store/api';
 
-const StyledPaper = styled(Paper)(() => ({
-    height: "100vh",
-    display: "flex",
-    overflow: "hidden",
-    borderRadius: 0,
-    boxShadow: "none",
+const ChatContainer = styled(Box)(({theme}) => ({
+    height: 'calc(100vh - 180px)',
+    display: 'flex',
+    flexDirection: 'column',
+    [theme.breakpoints.down('md')]: {
+        height: 'calc(100vh - 140px)',
+    }
+}));
+
+const MessagesContainer = styled(Paper)(({theme}) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    overflow: 'hidden',
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[1]
+}));
+
+const NoConversationSelected = styled(Box)(({theme}) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing(3),
+    textAlign: 'center'
 }));
 
 export const ChatPage = () => {
-    const [message, setMessage] = useState("");
-    const messagesEndRef = useRef<HTMLDivElement | null>(null);
-    const {conversationId} = useParams();
+    const {conversationId} = useParams<{ conversationId: string }>();
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const [showConversationList, setShowConversationList] = useState(!conversationId || !isMobile);
 
     const {
         data: myProfile,
-        isLoading: isProfileLoading,
+        isLoading: profileLoading
     } = useGetMyProfileQuery();
     const {
-        data: conversation,
-        isLoading: isConversationLoading,
-    } = useGetConversationQuery(conversationId || "", {skip: !conversationId});
+        data: conversations,
+        isLoading: conversationsLoading,
+        error: conversationsError
+    } = useGetProfileConversationsQuery(myProfile?.id || '', {skip: !myProfile?.id});
+    const {
+        data: currentConversation,
+        isLoading: conversationLoading,
+        error: conversationError
+    } = useGetConversationQuery(conversationId || '', {
+        skip: !conversationId
+    });
     const {
         data: messages,
-        isLoading: isMessagesLoading,
-    } = useGetConversationMessagesQuery(conversationId || "", {skip: !conversationId});
-    const [sendMessage] = useSendMessageMutation();
+        isLoading: messagesLoading,
+        error: messagesError
+    } = useGetConversationMessagesQuery(conversationId || '', {
+        skip: !conversationId,
+        pollingInterval: 3000 // Poll for new messages every 3 seconds
+    });
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+    const [sendMessage, {isLoading: isSendingMessage}] = useSendMessageMutation();
 
-    useEffect(() => {
-        if (!conversationId) {
-            navigate("/buddies");
+    const handleSelectConversation = (selectedConversationId: string) => {
+        navigate(`/chat/${selectedConversationId}`);
+        if (isMobile) {
+            setShowConversationList(false);
         }
-    }, [conversationId, navigate]);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
     };
 
-    const handleSendMessage = () => {
-        if (!message.trim() || !conversationId || !myProfile) return;
-        sendMessage({
-            conversationId,
-            profileId: myProfile.id,
-            content: message,
-        });
-        setMessage("");
+    const handleBackToList = () => {
+        setShowConversationList(true);
     };
 
-    const inputDisabled = isConversationLoading || isMessagesLoading;
+    const handleSendMessage = async (content: string) => {
+        if (!myProfile || !conversationId || !content.trim()) return;
 
-    const otherParticipant = conversation?.participants.find(
-        (participant) => participant.profile.id !== myProfile?.id
-    )?.profile;
+        try {
+            await sendMessage({
+                conversationId,
+                profileId: myProfile.id,
+                content: content.trim()
+            }).unwrap();
+        } catch (error) {
+            console.error('Failed to send message:', error);
+        }
+    };
 
-    const otherParticipantName = otherParticipant?.name || "Unknown";
-    const otherParticipantPhotoUrl = otherParticipant?.mainPhotoUrl || null;
+    useEffect(() => {
+        if (isMobile && conversationId) {
+            setShowConversationList(false);
+        } else if (!isMobile) {
+            setShowConversationList(true);
+        }
+    }, [isMobile, conversationId]);
+
+    if (profileLoading) {
+        return (
+            <PageContent title="Chat">
+                <Box display="flex" justifyContent="center" my={4}>
+                    <CircularProgress/>
+                </Box>
+            </PageContent>
+        );
+    }
+
+    if (conversationsError) {
+        return (
+            <PageContent title="Chat">
+                <Alert severity="error" sx={{mt: 2}}>
+                    Failed to load conversations. Please try again later.
+                </Alert>
+            </PageContent>
+        );
+    }
 
     return (
-        <Box 
-            sx={{ 
-                width: "100%", 
-                height: "100vh", 
-                display: "flex", 
-                justifyContent: "center",
-                backgroundColor: "#f0f2f5"
-            }}
-        >
-            <Box 
-                sx={{ 
-                    width: "100%", 
-                    maxWidth: { xs: "100%", sm: "100%", md: "768px" },
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    overflow: "hidden"
-                }}
-            >
-                <StyledPaper>
-                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", width: "100%" }}>
-                        <ChatHeader 
-                            participantName={otherParticipantName} 
-                            participantPhotoUrl={otherParticipantPhotoUrl || undefined}
-                        />
-                        
-                        {isProfileLoading || isConversationLoading || isMessagesLoading ? (
-                            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <CircularProgress />
-                            </Box>
-                        ) : (
-                            <MessageList
-                                messages={messages || []}
-                                myProfileId={myProfile?.id || ""}
-                                endRef={messagesEndRef}
-                                participantPhotoUrl={otherParticipantPhotoUrl || undefined}
+        <PageContent title="Chat">
+            <ChatContainer>
+                <Grid container spacing={2} sx={{height: '100%'}}>
+                    {(showConversationList || !isMobile) && (
+                        <Grid sx={{
+                            height: '100%',
+                            display: isMobile && conversationId ? 'none' : 'block'
+                        }}>
+                            <ConversationList
+                                conversations={conversations || []}
+                                selectedConversationId={conversationId}
+                                onSelectConversation={handleSelectConversation}
+                                isLoading={conversationsLoading}
+                                currentUserId={myProfile?.id || ''}
                             />
+                        </Grid>
+                    )}
+
+                    <Grid sx={{
+                        height: '100%',
+                        display: isMobile && showConversationList && conversationId ? 'none' : 'block'
+                    }}>
+                        {conversationId ? (
+                            <MessagesContainer>
+                                <MessageThread
+                                    conversation={currentConversation}
+                                    messages={messages || []}
+                                    currentUserId={myProfile?.id || ''}
+                                    isLoading={conversationLoading || messagesLoading}
+                                    error={conversationError || messagesError}
+                                    onBackClick={isMobile ? handleBackToList : undefined}
+                                />
+
+                                <MessageInput
+                                    onSendMessage={handleSendMessage}
+                                    isLoading={isSendingMessage}
+                                    disabled={!!conversationError || !!messagesError}
+                                />
+                            </MessagesContainer>
+                        ) : (
+                            <NoConversationSelected>
+                                <Typography variant="h6" gutterBottom>
+                                    Select a conversation
+                                </Typography>
+                                <Typography variant="body1" color="text.secondary">
+                                    Choose a conversation from the list to start chatting
+                                </Typography>
+                            </NoConversationSelected>
                         )}
-                        
-                        <InputBox
-                            message={message}
-                            setMessage={setMessage}
-                            onSendMessage={handleSendMessage}
-                            disabled={inputDisabled}
-                        />
-                    </Box>
-                </StyledPaper>
-            </Box>
-        </Box>
+                    </Grid>
+                </Grid>
+            </ChatContainer>
+        </PageContent>
     );
 };
