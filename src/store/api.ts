@@ -4,7 +4,7 @@ import type {RootState} from "./store.ts";
 import type {BaseQueryFn} from '@reduxjs/toolkit/query';
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'https://localhost:7280/api/',
+    baseUrl: 'https://sportybuddies-api.azurewebsites.net/api/',
     prepareHeaders: (headers, {getState}) => {
         const token = (getState() as RootState).auth.token;
         if (token) {

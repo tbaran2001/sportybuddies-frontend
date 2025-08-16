@@ -12,9 +12,11 @@ import {MessageList} from "../components/Chat/MessageList.tsx";
 import {InputBox} from "../components/Chat/InputBox.tsx";
 
 const StyledPaper = styled(Paper)(() => ({
-    height: "85vh",
+    height: "100vh",
     display: "flex",
     overflow: "hidden",
+    borderRadius: 0,
+    boxShadow: "none",
 }));
 
 export const ChatPage = () => {
@@ -63,35 +65,62 @@ export const ChatPage = () => {
 
     const inputDisabled = isConversationLoading || isMessagesLoading;
 
-    const otherParticipantName = conversation?.participants.find(
-        (participant) => participant.id !== myProfile?.id
-    )?.profile.name || "Nieznany uczestnik";
+    const otherParticipant = conversation?.participants.find(
+        (participant) => participant.profile.id !== myProfile?.id
+    )?.profile;
+
+    const otherParticipantName = otherParticipant?.name || "Unknown";
+    const otherParticipantPhotoUrl = otherParticipant?.mainPhotoUrl || null;
 
     return (
-        <Box flex={4}>
-            <StyledPaper elevation={10}>
-                <Box sx={{flex: 1, display: "flex", flexDirection: "column"}}>
-                    <ChatHeader participantName={otherParticipantName}/>
-                    {isProfileLoading || isConversationLoading || isMessagesLoading ? (
-                        <Box sx={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}>
-                            <CircularProgress/>
-                        </Box>
-                    ) : (
-                        <MessageList
-                            messages={messages || []}
-                            myProfileId={myProfile?.id || ""}
-                            endRef={messagesEndRef}
+        <Box 
+            sx={{ 
+                width: "100%", 
+                height: "100vh", 
+                display: "flex", 
+                justifyContent: "center",
+                backgroundColor: "#f0f2f5"
+            }}
+        >
+            <Box 
+                sx={{ 
+                    width: "100%", 
+                    maxWidth: { xs: "100%", sm: "100%", md: "768px" },
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden"
+                }}
+            >
+                <StyledPaper>
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", width: "100%" }}>
+                        <ChatHeader 
+                            participantName={otherParticipantName} 
+                            participantPhotoUrl={otherParticipantPhotoUrl || undefined}
                         />
-                    )
-                    }
-                    <InputBox
-                        message={message}
-                        setMessage={setMessage}
-                        onSendMessage={handleSendMessage}
-                        disabled={inputDisabled}
-                    />
-                </Box>
-            </StyledPaper>
+                        
+                        {isProfileLoading || isConversationLoading || isMessagesLoading ? (
+                            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <CircularProgress />
+                            </Box>
+                        ) : (
+                            <MessageList
+                                messages={messages || []}
+                                myProfileId={myProfile?.id || ""}
+                                endRef={messagesEndRef}
+                                participantPhotoUrl={otherParticipantPhotoUrl || undefined}
+                            />
+                        )}
+                        
+                        <InputBox
+                            message={message}
+                            setMessage={setMessage}
+                            onSendMessage={handleSendMessage}
+                            disabled={inputDisabled}
+                        />
+                    </Box>
+                </StyledPaper>
+            </Box>
         </Box>
     );
 };

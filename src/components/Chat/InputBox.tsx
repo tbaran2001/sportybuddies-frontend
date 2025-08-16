@@ -1,5 +1,9 @@
-import {Box, IconButton, TextField} from "@mui/material";
+import {Box, IconButton, TextField, InputAdornment, styled} from "@mui/material";
 import React from "react";
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import SentimentSatisfiedAltOutlinedIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 
 interface InputBoxProps {
     message: string;
@@ -7,6 +11,22 @@ interface InputBoxProps {
     onSendMessage: () => void;
     disabled?: boolean;
 }
+
+const StyledTextField = styled(TextField)(() => ({
+    '& .MuiOutlinedInput-root': {
+        borderRadius: '20px',
+        backgroundColor: '#f0f2f5',
+        '& fieldset': {
+            border: 'none',
+        },
+        '&:hover fieldset': {
+            border: 'none',
+        },
+        '&.Mui-focused fieldset': {
+            border: 'none',
+        },
+    },
+}));
 
 export const InputBox = ({message, setMessage, onSendMessage, disabled = false}: InputBoxProps) => {
 
@@ -18,49 +38,77 @@ export const InputBox = ({message, setMessage, onSendMessage, disabled = false}:
         }
     };
 
+    const handleSend = () => {
+        if (!disabled && message.trim()) {
+            onSendMessage();
+        }
+    };
+
     return (
         <Box
             sx={{
-                p: 2,
-                backgroundColor: "background.primary",
+                p: 1.5,
+                backgroundColor: "#ffffff",
                 borderTop: 1,
                 borderColor: "divider",
             }}
         >
-            <Box sx={{display: "flex", alignItems: "flex-end"}}>
-                <TextField
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton 
+                    color="primary" 
+                    aria-label="add attachment"
+                    disabled={disabled}
+                    sx={{ mr: 1 }}
+                >
+                    <AddCircleOutlineRoundedIcon />
+                </IconButton>
+                
+                <StyledTextField
                     fullWidth
                     multiline
                     maxRows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Your message..."
+                    placeholder="Aa"
                     variant="outlined"
-                    sx={{mr: 1}}
+                    size="small"
                     disabled={disabled}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton 
+                                    edge="end" 
+                                    disabled={disabled}
+                                    sx={{ mr: -0.5 }}
+                                >
+                                    <SentimentSatisfiedAltOutlinedIcon fontSize="small" />
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
-                <IconButton
-                    color="primary"
-                    onClick={() => !disabled && onSendMessage()}
-                    aria-label="send message"
-                    disabled={disabled}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                
+                {message.trim() ? (
+                    <IconButton
+                        color="primary"
+                        onClick={handleSend}
+                        aria-label="send message"
+                        disabled={disabled}
+                        sx={{ ml: 1, color: "#0084ff" }}
                     >
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </IconButton>
+                        <SendRoundedIcon />
+                    </IconButton>
+                ) : (
+                    <IconButton
+                        color="primary"
+                        aria-label="send thumbs up"
+                        disabled={disabled}
+                        sx={{ ml: 1, color: "#0084ff" }}
+                    >
+                        <ThumbUpAltRoundedIcon />
+                    </IconButton>
+                )}
             </Box>
         </Box>
     );
