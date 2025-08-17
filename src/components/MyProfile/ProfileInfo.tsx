@@ -20,9 +20,13 @@ const ProfileName = styled(Typography)(({theme}) => ({
 }));
 
 const LocationChip = styled(Chip)(({theme}) => ({
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.grey[200],
+    border: `1px solid ${theme.palette.divider}`,
     '& .MuiChip-icon': {
         color: theme.palette.primary.main,
+    },
+    '& .MuiChip-label': {
+        color: theme.palette.text.primary,
     },
 }));
 
