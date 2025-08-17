@@ -8,7 +8,6 @@ import {
 import HomePage from "./pages/Home.tsx";
 import RootLayout from "./pages/Root.tsx";
 import ErrorPage from "./pages/Error.tsx";
-import EditProfilePage from "./pages/EditProfile.tsx";
 import AuthenticationPage from "./pages/Authentication.tsx";
 import MyProfilePage from "./pages/MyProfile.tsx";
 import ProtectedLayout from "./pages/ProtectedLayout.tsx";
@@ -27,7 +26,6 @@ function App() {
                 <Route path="logout" loader={logoutLoader}/>
                 <Route element={<ProtectedLayout/>}>
                     <Route path="profiles/me" element={<MyProfilePage/>}/>
-                    <Route path="profiles/:profileId/edit" element={<EditProfilePage/>}/>
                     <Route path="matching" element={<MatchingPage/>}/>
                     <Route path="buddies" element={<BuddiesPage/>}/>
                     <Route path="chat" element={<ChatPage/>}/>

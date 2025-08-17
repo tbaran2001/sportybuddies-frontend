@@ -31,7 +31,6 @@ export const BuddiesPage = () => {
         refetch: refetchBuddies
     } = useGetProfileBuddiesQuery(myProfile?.id || '', { skip: !myProfile?.id, refetchOnMountOrArgChange: true });
 
-    // Force refresh on mount and when profile becomes available
     useEffect(() => {
         refetchMyProfile();
     }, [refetchMyProfile]);

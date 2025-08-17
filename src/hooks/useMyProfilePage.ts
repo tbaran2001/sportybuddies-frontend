@@ -5,10 +5,13 @@ import {
     useUpdateProfilePartialMutation,
     useAddProfileSportMutation,
     useRemoveProfileSportMutation,
+    useUpdateProfileLocationMutation,
 } from '../store/api';
 import type {Sport, Profile} from '../models/profile';
 import {getRandomSportsPhotos} from '../utils/samplePhotos';
 import type {NotificationState} from '../components/common/NotificationSnackbar';
+import {getCurrentCoordinates} from '../utils/geolocation';
+import {reverseGeocodeCity} from '../utils/reverseGeocoding';
 
 export const useMyProfilePage = () => {
     const [notification, setNotification] = useState<NotificationState>({
@@ -32,6 +35,7 @@ export const useMyProfilePage = () => {
     const [updateProfile, {isLoading: isUpdating}] = useUpdateProfilePartialMutation();
     const [addSport, {isLoading: isAddingSport}] = useAddProfileSportMutation();
     const [removeSport, {isLoading: isRemovingSport}] = useRemoveProfileSportMutation();
+    const [updateLocation, {isLoading: isUpdatingLocation}] = useUpdateProfileLocationMutation();
 
     const displayPhotos = useMemo(() => getRandomSportsPhotos(3), []);
 
@@ -91,12 +95,34 @@ export const useMyProfilePage = () => {
         [addSport, removeSport, profile]
     );
 
+    const handleUpdateLocation = useCallback(async () => {
+        if (!profile) return;
+        try {
+            const {latitude, longitude} = await getCurrentCoordinates({enableHighAccuracy: true, timeout: 15000});
+
+            const city = await reverseGeocodeCity(latitude, longitude);
+
+            await updateLocation({
+                profileId: profile.id,
+                latitude,
+                longitude,
+                address: city ?? '',
+            }).unwrap();
+
+            setNotification({open: true, message: 'Location updated successfully!', severity: 'success'});
+        } catch (error) {
+            console.error('Failed to update location:', error);
+            const msg = (error instanceof Error) ? error.message : 'Failed to update location. Please try again.';
+            setNotification({open: true, message: msg, severity: 'error'});
+        }
+    }, [profile, updateLocation]);
+
     const handleCloseNotification = useCallback(() => {
         setNotification((prev) => ({...prev, open: false}));
     }, []);
 
     const isLoading = profileLoading || sportsLoading;
-    const saving = isUpdating || isAddingSport || isRemovingSport;
+    const saving = isUpdating || isAddingSport || isRemovingSport || isUpdatingLocation;
 
     return {
         profile: profile as Profile | undefined,
@@ -111,6 +137,7 @@ export const useMyProfilePage = () => {
         handleBioUpdate,
         handleBasicInfoSave,
         handleSportToggle,
+        handleUpdateLocation,
         notification,
         handleCloseNotification,
     } as const;

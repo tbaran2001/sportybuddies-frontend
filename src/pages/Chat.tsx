@@ -67,13 +67,13 @@ export const ChatPage = () => {
         data: myProfile,
         isLoading: profileLoading,
         refetch: refetchMyProfile
-    } = useGetMyProfileQuery(undefined, { refetchOnMountOrArgChange: true });
+    } = useGetMyProfileQuery(undefined, {refetchOnMountOrArgChange: true});
     const {
         data: conversations,
         isLoading: conversationsLoading,
         error: conversationsError,
         refetch: refetchConversations
-    } = useGetProfileConversationsQuery(myProfile?.id || '', { skip: !myProfile?.id, refetchOnMountOrArgChange: true });
+    } = useGetProfileConversationsQuery(myProfile?.id || '', {skip: !myProfile?.id, refetchOnMountOrArgChange: true});
     const {
         data: currentConversation,
         isLoading: conversationLoading,
@@ -102,7 +102,6 @@ export const ChatPage = () => {
         refetchOnMountOrArgChange: true
     });
 
-    // Force refresh on mount and when identifiers change
     useEffect(() => {
         refetchMyProfile();
     }, [refetchMyProfile]);

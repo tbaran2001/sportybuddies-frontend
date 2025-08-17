@@ -5,7 +5,8 @@ import {
     CircularProgress,
     Alert,
     Stack,
-    styled
+    styled,
+    Button
 } from '@mui/material';
 import PageContent from '../components/PageContent';
 import PhotoCarousel from '../components/MyProfile/PhotoCarousel';
@@ -36,6 +37,7 @@ const MyProfilePage = () => {
         notification,
         handleCloseNotification,
         handleBasicInfoSave,
+        handleUpdateLocation,
     } = useMyProfilePage();
 
     if (isLoading) {
@@ -76,6 +78,12 @@ const MyProfilePage = () => {
 
                     <Box mt={2}>
                         <ProfileInfo profile={profile}/>
+                    </Box>
+
+                    <Box mt={1} display="flex" justifyContent="flex-start">
+                        <Button variant="outlined" size="small" onClick={handleUpdateLocation} disabled={saving}>
+                            Update my location
+                        </Button>
                     </Box>
 
                     <BasicInfoEditor profile={profile} onSave={handleBasicInfoSave} saving={saving}/>
