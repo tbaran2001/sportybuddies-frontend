@@ -1,13 +1,12 @@
 {
-  "routes": [
-    {
-      "route": "/*",
-      "serve": "/index.html",
-      "statusCode": 200
-    }
-  ],
   "navigationFallback": {
-    "rewrite": "/index.html"
+    "rewrite": "/index.html",
+    "exclude": [
+      "/static/media/*",
+      "/static/css/*",
+      "/vite.svg",
+      "/assets/*"
+    ]
   },
   "mimeTypes": {
     ".json": "application/json",
@@ -16,4 +15,3 @@
     ".html": "text/html"
   }
 }
-
