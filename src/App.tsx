@@ -6,11 +6,9 @@ import {
     Route
 } from "react-router-dom";
 import HomePage from "./pages/Home.tsx";
-import ProfilesPage from "./pages/Profiles.tsx";
 import RootLayout from "./pages/Root.tsx";
 import ErrorPage from "./pages/Error.tsx";
 import EditProfilePage from "./pages/EditProfile.tsx";
-import ProfileDetailPage from "./pages/ProfileDetail.tsx";
 import AuthenticationPage from "./pages/Authentication.tsx";
 import MyProfilePage from "./pages/MyProfile.tsx";
 import ProtectedLayout from "./pages/ProtectedLayout.tsx";
@@ -27,12 +25,6 @@ function App() {
                 <Route index element={<HomePage/>}/>
                 <Route path="auth" element={<AuthenticationPage/>}/>
                 <Route path="logout" loader={logoutLoader}/>
-                <Route path="profiles">
-                    <Route index element={<ProfilesPage/>}/>
-                    <Route path=":profileId" id="profile-detail">
-                        <Route index element={<ProfileDetailPage/>}/>
-                    </Route>
-                </Route>
                 <Route element={<ProtectedLayout/>}>
                     <Route path="profiles/me" element={<MyProfilePage/>}/>
                     <Route path="profiles/:profileId/edit" element={<EditProfilePage/>}/>
