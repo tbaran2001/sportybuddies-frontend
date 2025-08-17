@@ -25,11 +25,22 @@ export const MatchingPage = () => {
     const [expanded, setExpanded] = useState(false);
     const [currentPhotos, setCurrentPhotos] = useState<string[]>([]);
 
-    const {data: myProfile, isLoading: profileLoading} = useGetMyProfileQuery();
+    const {data: myProfile, isLoading: profileLoading, refetch: refetchMyProfile} = useGetMyProfileQuery(undefined, { refetchOnMountOrArgChange: true });
     const {data: match, isLoading: matchLoading, refetch: refetchMatch} =
-        useGetRandomMatchQuery(myProfile?.id || '', {skip: !myProfile?.id});
+        useGetRandomMatchQuery(myProfile?.id || '', {skip: !myProfile?.id, refetchOnMountOrArgChange: true});
 
     const [updateSwipe, {isLoading: isUpdatingSwipe}] = useUpdateMatchSwipeMutation();
+
+    // Force refresh on mount and when profile becomes available
+    useEffect(() => {
+        refetchMyProfile();
+    }, [refetchMyProfile]);
+
+    useEffect(() => {
+        if (myProfile?.id) {
+            refetchMatch();
+        }
+    }, [myProfile?.id, refetchMatch]);
 
     useEffect(() => {
         if (match?.matchedProfile) {

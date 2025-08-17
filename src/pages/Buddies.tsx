@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {
     Container,
@@ -21,13 +21,26 @@ export const BuddiesPage = () => {
     const {
         data: myProfile,
         isLoading: profileLoading,
-        error: profileError
-    } = useGetMyProfileQuery();
+        error: profileError,
+        refetch: refetchMyProfile
+    } = useGetMyProfileQuery(undefined, { refetchOnMountOrArgChange: true });
     const {
         data: buddies,
         isLoading: buddiesLoading,
-        error: buddiesError
-    } = useGetProfileBuddiesQuery(myProfile?.id || '', {skip: !myProfile?.id});
+        error: buddiesError,
+        refetch: refetchBuddies
+    } = useGetProfileBuddiesQuery(myProfile?.id || '', { skip: !myProfile?.id, refetchOnMountOrArgChange: true });
+
+    // Force refresh on mount and when profile becomes available
+    useEffect(() => {
+        refetchMyProfile();
+    }, [refetchMyProfile]);
+
+    useEffect(() => {
+        if (myProfile?.id) {
+            refetchBuddies();
+        }
+    }, [myProfile?.id, refetchBuddies]);
 
     const [createConversation, {isLoading: isCreatingConversation}] = useCreateConversationMutation();
 

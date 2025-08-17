@@ -65,35 +65,60 @@ export const ChatPage = () => {
 
     const {
         data: myProfile,
-        isLoading: profileLoading
-    } = useGetMyProfileQuery();
+        isLoading: profileLoading,
+        refetch: refetchMyProfile
+    } = useGetMyProfileQuery(undefined, { refetchOnMountOrArgChange: true });
     const {
         data: conversations,
         isLoading: conversationsLoading,
-        error: conversationsError
-    } = useGetProfileConversationsQuery(myProfile?.id || '', {skip: !myProfile?.id});
+        error: conversationsError,
+        refetch: refetchConversations
+    } = useGetProfileConversationsQuery(myProfile?.id || '', { skip: !myProfile?.id, refetchOnMountOrArgChange: true });
     const {
         data: currentConversation,
         isLoading: conversationLoading,
-        error: conversationError
+        error: conversationError,
+        refetch: refetchConversation
     } = useGetConversationQuery(conversationId || '', {
-        skip: !conversationId
+        skip: !conversationId,
+        refetchOnMountOrArgChange: true
     });
     const {
         data: messages,
         isLoading: messagesLoading,
-        error: messagesError
+        error: messagesError,
+        refetch: refetchMessages
     } = useGetConversationMessagesQuery(conversationId || '', {
         skip: !conversationId,
-        pollingInterval: 3000 // Poll for new messages every 3 seconds
+        pollingInterval: 3000, // Poll for new messages every 3 seconds
+        refetchOnMountOrArgChange: true
     });
 
     const {
         data: latestConversation,
         isLoading: latestLoading
     } = useGetLatestProfileConversationQuery(myProfile?.id || '', {
-        skip: !myProfile?.id || !!conversationId || !!location.state?.suppressAutoSelect
+        skip: !myProfile?.id || !!conversationId || !!location.state?.suppressAutoSelect,
+        refetchOnMountOrArgChange: true
     });
+
+    // Force refresh on mount and when identifiers change
+    useEffect(() => {
+        refetchMyProfile();
+    }, [refetchMyProfile]);
+
+    useEffect(() => {
+        if (myProfile?.id) {
+            refetchConversations();
+        }
+    }, [myProfile?.id, refetchConversations]);
+
+    useEffect(() => {
+        if (conversationId) {
+            refetchConversation();
+            refetchMessages();
+        }
+    }, [conversationId, refetchConversation, refetchMessages]);
 
     const [sendMessage, {isLoading: isSendingMessage}] = useSendMessageMutation();
 

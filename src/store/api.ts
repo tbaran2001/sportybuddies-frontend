@@ -52,6 +52,9 @@ const baseQueryWithLogging: BaseQueryFn = async (args, api, extraOptions) => {
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithLogging,
+    // Ensure data refresh on tab focus / reconnect globally
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
     tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch', 'Buddies', 'Messages', 'Conversations'],
     endpoints: (builder) => ({
         login: builder.mutation<string, string>({
@@ -138,6 +141,19 @@ export const api = createApi({
             }),
             invalidatesTags: ['MyProfile'],
         }),
+        updateProfileLocation: builder.mutation<void, {
+            profileId: string;
+            latitude: number;
+            longitude: number;
+            address: string;
+        }>({
+            query: ({profileId, ...body}) => ({
+                url: `profiles/${profileId}/location`,
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: ['MyProfile'],
+        }),
         getRandomMatch: builder.query<Match | null, string>({
             query: (profileId) => `matches/GetRandomMatch/${profileId}`,
             transformResponse: (response: { match: Match | null }) => response.match,
@@ -203,6 +219,7 @@ export const {
     useUpdateProfileMutation,
     useUpdateProfilePartialMutation,
     useUpdateProfilePreferencesMutation,
+    useUpdateProfileLocationMutation,
     useGetRandomMatchQuery,
     useUpdateMatchSwipeMutation,
     useGetProfileBuddiesQuery,
