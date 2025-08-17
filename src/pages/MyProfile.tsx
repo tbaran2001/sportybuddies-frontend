@@ -15,6 +15,7 @@ import SportsList from '../components/MyProfile/SportsList';
 import {Preferences} from "../components/Preferences/Preferences.tsx";
 import {useMyProfilePage} from '../hooks/useMyProfilePage';
 import {NotificationSnackbar} from '../components/common/NotificationSnackbar';
+import BasicInfoEditor from '../components/MyProfile/BasicInfoEditor';
 
 const ProfileContainer = styled(Box)(({theme}) => ({
     marginTop: theme.spacing(2),
@@ -34,6 +35,7 @@ const MyProfilePage = () => {
         handleSportToggle,
         notification,
         handleCloseNotification,
+        handleBasicInfoSave,
     } = useMyProfilePage();
 
     if (isLoading) {
@@ -75,6 +77,8 @@ const MyProfilePage = () => {
                     <Box mt={2}>
                         <ProfileInfo profile={profile}/>
                     </Box>
+
+                    <BasicInfoEditor profile={profile} onSave={handleBasicInfoSave} saving={saving}/>
 
                     <BioSection
                         bio={profile.description}

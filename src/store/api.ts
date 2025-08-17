@@ -52,7 +52,6 @@ const baseQueryWithLogging: BaseQueryFn = async (args, api, extraOptions) => {
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithLogging,
-    // Ensure data refresh on tab focus / reconnect globally
     refetchOnFocus: true,
     refetchOnReconnect: true,
     tagTypes: ['MyProfile', 'Profiles', 'Sports', 'RandomMatch', 'Buddies', 'Messages', 'Conversations'],

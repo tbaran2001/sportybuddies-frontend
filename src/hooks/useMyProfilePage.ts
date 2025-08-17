@@ -49,6 +49,29 @@ export const useMyProfilePage = () => {
         [profile, updateProfile]
     );
 
+    const handleBasicInfoSave = useCallback(
+        async (data: { name: string; gender: number; dateOfBirth: string }) => {
+            if (!profile) return;
+            try {
+                await updateProfile({
+                    profileId: profile.id,
+                    name: data.name,
+                    gender: data.gender,
+                    dateOfBirth: data.dateOfBirth,
+                }).unwrap();
+                setNotification({open: true, message: 'Profile updated successfully!', severity: 'success'});
+            } catch (error) {
+                console.error('Failed to update basic info:', error);
+                setNotification({
+                    open: true,
+                    message: 'Failed to update profile. Please try again.',
+                    severity: 'error'
+                });
+            }
+        },
+        [profile, updateProfile]
+    );
+
     const handleSportToggle = useCallback(
         async (sport: Sport, isSelected: boolean) => {
             if (!profile) return;
@@ -86,6 +109,7 @@ export const useMyProfilePage = () => {
         saving,
 
         handleBioUpdate,
+        handleBasicInfoSave,
         handleSportToggle,
         notification,
         handleCloseNotification,
