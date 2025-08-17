@@ -37,7 +37,7 @@ const ThreadContent = styled(Box)(({theme}) => ({
     padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.grey[50]
+    backgroundColor: theme.palette.background.default
 }));
 
 // Use shouldForwardProp to prevent passing isCurrentUser to the DOM element
@@ -61,11 +61,13 @@ const MessageGroup = styled(Box)(() => ({
     marginBottom: 16
 }));
 
-const MessageTime = styled(Typography)(({theme}) => ({
+const MessageTime = styled(Typography, {
+    shouldForwardProp: (prop) => prop !== 'isCurrentUser'
+})<{ isCurrentUser: boolean }>(({theme, isCurrentUser}) => ({
     fontSize: '0.7rem',
     color: theme.palette.text.secondary,
     marginTop: 4,
-    textAlign: 'right'
+    textAlign: isCurrentUser ? 'right' : 'left'
 }));
 
 const MessageThread = ({
@@ -220,7 +222,7 @@ const MessageThread = ({
 
                         return (
                             <MessageGroup key={`group-${groupIndex}`}>
-                                {group.map((message, messageIndex) => (
+                                {group.map((message) => (
                                     <Box key={message.id} sx={{display: 'flex', flexDirection: 'column'}}>
                                         <MessageBubble isCurrentUser={isCurrentUser}>
                                             <Typography variant="body1">
@@ -228,11 +230,9 @@ const MessageThread = ({
                                             </Typography>
                                         </MessageBubble>
 
-                                        {messageIndex === group.length - 1 && (
-                                            <MessageTime>
-                                                {formatMessageTime(message.createdOn)}
-                                            </MessageTime>
-                                        )}
+                                        <MessageTime isCurrentUser={isCurrentUser}>
+                                            {formatMessageTime(message.createdOn)}
+                                        </MessageTime>
                                     </Box>
                                 ))}
                             </MessageGroup>
@@ -246,3 +246,4 @@ const MessageThread = ({
 };
 
 export default MessageThread;
+

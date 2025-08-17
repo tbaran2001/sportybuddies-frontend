@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import {useParams, useNavigate, useLocation} from 'react-router-dom';
 import {
     Box,
     Grid,
@@ -20,7 +20,8 @@ import {
     useGetConversationQuery,
     useGetConversationMessagesQuery,
     useSendMessageMutation,
-    useGetProfileConversationsQuery
+    useGetProfileConversationsQuery,
+    useGetLatestProfileConversationQuery
 } from '../store/api';
 
 const ChatContainer = styled(Box)(({theme}) => ({
@@ -38,7 +39,8 @@ const MessagesContainer = styled(Paper)(({theme}) => ({
     height: '100%',
     overflow: 'hidden',
     borderRadius: theme.shape.borderRadius,
-    boxShadow: theme.shadows[1]
+    boxShadow: theme.shadows[1],
+    backgroundColor: theme.palette.background.default
 }));
 
 const NoConversationSelected = styled(Box)(({theme}) => ({
@@ -56,6 +58,7 @@ const NoConversationSelected = styled(Box)(({theme}) => ({
 export const ChatPage = () => {
     const {conversationId} = useParams<{ conversationId: string }>();
     const navigate = useNavigate();
+    const location = useLocation() as ReturnType<typeof useLocation> & { state?: { suppressAutoSelect?: boolean } };
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [showConversationList, setShowConversationList] = useState(!conversationId || !isMobile);
@@ -85,6 +88,13 @@ export const ChatPage = () => {
         pollingInterval: 3000 // Poll for new messages every 3 seconds
     });
 
+    const {
+        data: latestConversation,
+        isLoading: latestLoading
+    } = useGetLatestProfileConversationQuery(myProfile?.id || '', {
+        skip: !myProfile?.id || !!conversationId || !!location.state?.suppressAutoSelect
+    });
+
     const [sendMessage, {isLoading: isSendingMessage}] = useSendMessageMutation();
 
     const handleSelectConversation = (selectedConversationId: string) => {
@@ -96,6 +106,7 @@ export const ChatPage = () => {
 
     const handleBackToList = () => {
         setShowConversationList(true);
+        if (isMobile) navigate('/chat', {state: {suppressAutoSelect: true}, replace: true});
     };
 
     const handleSendMessage = async (content: string) => {
@@ -113,9 +124,34 @@ export const ChatPage = () => {
     };
 
     useEffect(() => {
-        if (isMobile && conversationId) {
-            setShowConversationList(false);
-        } else if (!isMobile) {
+        if (!myProfile?.id) return;
+        if (conversationId) return;
+        if (location.state?.suppressAutoSelect) return;
+
+        if (!latestLoading && latestConversation) {
+            navigate(`/chat/${latestConversation.id}`, {replace: true});
+            return;
+        }
+
+        if (!latestLoading && !latestConversation && !conversationsLoading) {
+            const list = conversations || [];
+            if (list.length === 0) return;
+            const sorted = [...list].sort((a, b) => {
+                const aMy = a.participants.find(p => p.profile.id === myProfile.id);
+                const bMy = b.participants.find(p => p.profile.id === myProfile.id);
+                const aTime = aMy ? Date.parse(aMy.createdOn) : 0;
+                const bTime = bMy ? Date.parse(bMy.createdOn) : 0;
+                return bTime - aTime;
+            });
+            const targetId = sorted[0]?.id;
+            if (targetId) navigate(`/chat/${targetId}`, {replace: true});
+        }
+    }, [myProfile?.id, conversationId, location.state, latestConversation, latestLoading, conversations, conversationsLoading, navigate]);
+
+    useEffect(() => {
+        if (isMobile) {
+            setShowConversationList(!conversationId);
+        } else {
             setShowConversationList(true);
         }
     }, [isMobile, conversationId]);
@@ -144,10 +180,9 @@ export const ChatPage = () => {
         <PageContent title="Chat">
             <ChatContainer>
                 <Grid container spacing={2} sx={{height: '100%'}}>
-                    {(showConversationList || !isMobile) && (
-                        <Grid sx={{
-                            height: '100%',
-                            display: isMobile && conversationId ? 'none' : 'block'
+                    {(!isMobile || showConversationList) && (
+                        <Grid size={{xs: 12, md: 4}} sx={{
+                            height: '100%'
                         }}>
                             <ConversationList
                                 conversations={conversations || []}
@@ -159,38 +194,41 @@ export const ChatPage = () => {
                         </Grid>
                     )}
 
-                    <Grid sx={{
-                        height: '100%',
-                        display: isMobile && showConversationList && conversationId ? 'none' : 'block'
-                    }}>
-                        {conversationId ? (
-                            <MessagesContainer>
-                                <MessageThread
-                                    conversation={currentConversation}
-                                    messages={messages || []}
-                                    currentUserId={myProfile?.id || ''}
-                                    isLoading={conversationLoading || messagesLoading}
-                                    error={conversationError || messagesError}
-                                    onBackClick={isMobile ? handleBackToList : undefined}
-                                />
+                    {(!isMobile || !showConversationList) && (
+                        <Grid size={{xs: 12, md: 8}} sx={{
+                            height: '100%'
+                        }}>
+                            {conversationId ? (
+                                <MessagesContainer>
+                                    <MessageThread
+                                        conversation={currentConversation}
+                                        messages={messages || []}
+                                        currentUserId={myProfile?.id || ''}
+                                        isLoading={conversationLoading || messagesLoading}
+                                        error={conversationError || messagesError}
+                                        onBackClick={isMobile ? handleBackToList : undefined}
+                                    />
 
-                                <MessageInput
-                                    onSendMessage={handleSendMessage}
-                                    isLoading={isSendingMessage}
-                                    disabled={!!conversationError || !!messagesError}
-                                />
-                            </MessagesContainer>
-                        ) : (
-                            <NoConversationSelected>
-                                <Typography variant="h6" gutterBottom>
-                                    Select a conversation
-                                </Typography>
-                                <Typography variant="body1" color="text.secondary">
-                                    Choose a conversation from the list to start chatting
-                                </Typography>
-                            </NoConversationSelected>
-                        )}
-                    </Grid>
+                                    <MessageInput
+                                        onSendMessage={handleSendMessage}
+                                        isLoading={isSendingMessage}
+                                        disabled={!!conversationError || !!messagesError}
+                                    />
+                                </MessagesContainer>
+                            ) : (
+                                <NoConversationSelected>
+                                    <Typography variant="h6" gutterBottom>
+                                        {conversationsLoading || latestLoading ? 'Loading conversations...' : (conversations?.length ? 'Select a conversation' : 'No conversations yet')}
+                                    </Typography>
+                                    <Typography variant="body1" color="text.secondary">
+                                        {conversationsLoading || latestLoading
+                                            ? 'Please wait'
+                                            : (conversations?.length ? 'Choose a conversation from the list to start chatting' : 'Start matching to create your first conversation.')}
+                                    </Typography>
+                                </NoConversationSelected>
+                            )}
+                        </Grid>
+                    )}
                 </Grid>
             </ChatContainer>
         </PageContent>

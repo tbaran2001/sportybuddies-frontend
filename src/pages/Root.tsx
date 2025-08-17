@@ -6,7 +6,7 @@ const RootLayout = () => {
     return (
         <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
             <MainNavigation/>
-            <Container component="main" sx={{
+            <Container component="main" maxWidth={false} sx={{
                 flexGrow: 1,
                 py: 4,
                 display: 'flex',

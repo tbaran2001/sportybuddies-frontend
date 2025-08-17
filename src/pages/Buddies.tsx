@@ -84,7 +84,7 @@ export const BuddiesPage = () => {
     return (
         <PageContent title="My Buddies">
             <Container maxWidth="lg">
-                <Typography variant="body1" paragraph>
+                <Typography variant="body1" sx={{ mb: 2 }}>
                     These are people you've matched with. Start a conversation to get to know them better!
                 </Typography>
 
@@ -93,7 +93,7 @@ export const BuddiesPage = () => {
                         const isLoading = loadingStates[buddy.id] || isCreatingConversation;
 
                         return (
-                            <Grid key={buddy.id}>
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={buddy.id}>
                                 <BuddyCard
                                     buddy={buddy}
                                     isLoading={isLoading}

@@ -185,6 +185,10 @@ export const api = createApi({
             query: (profileId) => `conversations/GetByProfile/${profileId}`,
             transformResponse: (response: { conversations: Conversation[] }) => response.conversations,
         }),
+        getLatestProfileConversation: builder.query<Conversation | null, string>({
+            query: (profileId) => `conversations/GetLatestByProfile/${profileId}`,
+            transformResponse: (response: { conversation: Conversation | null }) => response.conversation,
+        }),
     }),
 });
 
@@ -207,4 +211,5 @@ export const {
     useGetConversationMessagesQuery,
     useSendMessageMutation,
     useGetProfileConversationsQuery,
+    useGetLatestProfileConversationQuery,
 } = api;

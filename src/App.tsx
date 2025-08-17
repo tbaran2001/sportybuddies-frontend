@@ -30,6 +30,7 @@ function App() {
                     <Route path="profiles/:profileId/edit" element={<EditProfilePage/>}/>
                     <Route path="matching" element={<MatchingPage/>}/>
                     <Route path="buddies" element={<BuddiesPage/>}/>
+                    <Route path="chat" element={<ChatPage/>}/>
                     <Route path="chat/:conversationId" element={<ChatPage/>}/>
                 </Route>
             </Route>
