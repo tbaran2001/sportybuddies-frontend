@@ -12,10 +12,10 @@ const Details = styled(Box, {
     shouldForwardProp: (prop) => prop !== 'expanded',
 })<{ expanded: boolean }>(({theme, expanded}) => ({
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2),
+    padding: expanded ? theme.spacing(2) : 0,
     maxHeight: expanded ? 400 : 0,
     overflow: 'hidden',
-    transition: theme.transitions.create(['max-height']),
+    transition: theme.transitions.create(['max-height', 'padding']),
 }));
 
 const MatchDetails = ({expanded, description, sports}: MatchDetailsProps) => {

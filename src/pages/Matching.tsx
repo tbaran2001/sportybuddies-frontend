@@ -4,6 +4,7 @@ import {
     Container,
     CircularProgress,
     Alert,
+    styled,
 } from '@mui/material';
 import PageContent from '../components/PageContent';
 import PhotoCarousel from '../components/MyProfile/PhotoCarousel';
@@ -14,6 +15,11 @@ import SwipeButtons from '../components/Matching/SwipeButtons';
 import {useGetMyProfileQuery, useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from '../store/api';
 import {getRandomSportsPhotos} from '../utils/samplePhotos';
 import {calculateAge} from '../utils/profileUtils';
+
+const MediaArea = styled(Box)({
+    position: 'relative',
+    overflow: 'hidden',
+});
 
 export const MatchingPage = () => {
     const [expanded, setExpanded] = useState(false);
@@ -81,16 +87,18 @@ export const MatchingPage = () => {
         <PageContent title="Find Buddies">
             <Container maxWidth="md">
                 <MatchCardContainer>
-                    <PhotoCarousel photos={currentPhotos}/>
+                    <MediaArea>
+                        <PhotoCarousel photos={currentPhotos}/>
 
-                    <MatchHeader
-                        name={matchedProfile.name}
-                        age={age}
-                        distanceMiles={Math.round(match.distance)}
-                        showLocation={!!matchedProfile.location}
-                        expanded={expanded}
-                        onToggle={toggleExpanded}
-                    />
+                        <MatchHeader
+                            name={matchedProfile.name}
+                            age={age}
+                            distanceMiles={Math.round(match.distance)}
+                            showLocation={!!matchedProfile.location}
+                            expanded={expanded}
+                            onToggle={toggleExpanded}
+                        />
+                    </MediaArea>
 
                     <MatchDetails
                         expanded={expanded}
