@@ -1,6 +1,6 @@
 import {Avatar, Box, Card, Container, Fade, Grid, Typography, useTheme} from '@mui/material';
 import {styled} from '@mui/material/styles';
-import SectionTitle from '../common/SectionTitle';
+import SectionTitle from './SectionTitle.tsx';
 
 const TestimonialCard = styled(Card)(({theme}) => ({
     height: '100%',

@@ -1,6 +1,6 @@
 import {Box, Card, CardContent, Container, Fade, Grid, Typography, useTheme} from '@mui/material';
 import {styled} from '@mui/material/styles';
-import SectionTitle from '../common/SectionTitle';
+import SectionTitle from './SectionTitle.tsx';
 import type {ReactNode} from 'react';
 
 const FeatureCard = styled(Card)(({theme}) => ({

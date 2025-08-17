@@ -12,9 +12,9 @@ import {
     useMediaQuery
 } from '@mui/material';
 import PageContent from '../components/PageContent';
-import ConversationList from '../components/chat/ConversationList';
-import MessageThread from '../components/chat/MessageThread';
-import MessageInput from '../components/chat/MessageInput';
+import ConversationList from '../components/Chat/ConversationList';
+import MessageThread from '../components/Chat/MessageThread';
+import MessageInput from '../components/Chat/MessageInput';
 import {
     useGetMyProfileQuery,
     useGetConversationQuery,

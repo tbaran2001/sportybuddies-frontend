@@ -1,5 +1,5 @@
 import {Avatar, Box, Container, Fade, Grid, Stack, Typography, useTheme} from '@mui/material';
-import SectionTitle from '../common/SectionTitle';
+import SectionTitle from './SectionTitle.tsx';
 
 export type HowStep = {
     step: number;

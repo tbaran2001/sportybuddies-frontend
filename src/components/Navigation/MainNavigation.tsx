@@ -41,7 +41,7 @@ export const MainNavigation = () => {
     const privatePages = [
         {name: 'Matching', path: '/matching'},
         {name: 'Buddies', path: '/buddies'},
-        {name: 'Chat', path: '/chat'},
+        {name: 'Chat', path: '/Chat'},
     ];
 
     const userSettings = [

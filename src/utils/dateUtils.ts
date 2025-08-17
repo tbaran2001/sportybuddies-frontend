@@ -1,7 +1,7 @@
 import {format, formatDistanceToNow, isToday, isYesterday} from 'date-fns';
 
 /**
- * Format a date for display in the chat UI
+ * Format a date for display in the Chat UI
  * @param dateString Date string to format
  * @returns Formatted date string
  */
