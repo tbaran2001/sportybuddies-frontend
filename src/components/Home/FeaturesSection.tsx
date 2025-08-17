@@ -34,19 +34,13 @@ const FeaturesSection = ({title, items, animate}: FeaturesSectionProps) => {
         <Box sx={{py: 8, backgroundColor: theme.palette.background.default}}>
             <Container maxWidth="lg">
                 <SectionTitle variant="h3">{title}</SectionTitle>
-                <Grid container spacing={4}>
+                <Grid container spacing={4} justifyContent="center">
                     {items.map((feature, index) => (
-                        <Grid key={feature.id}>
+                        <Grid size={{ xs: 12, sm: 4 }} key={feature.id}>
                             <Fade in={animate} timeout={1000} style={{transitionDelay: `${index * 200}ms`}}>
                                 <FeatureCard>
-                                    <Box sx={{
-                                        height: 200,
-                                        backgroundImage: `url(${feature.image})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
-                                    }}/>
                                     <CardContent sx={{flexGrow: 1, textAlign: 'center', p: 3}}>
-                                        <Box sx={{mb: 2}}>{feature.icon}</Box>
+                                        <Box sx={{mb: 2, fontSize: 48}}>{feature.icon}</Box>
                                         <Typography variant="h5" component="h3" gutterBottom>
                                             {feature.title}
                                         </Typography>

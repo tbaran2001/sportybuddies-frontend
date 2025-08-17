@@ -21,7 +21,7 @@ const HowItWorksSection = ({title, imageUrl, steps, animate}: HowItWorksSectionP
             <Container maxWidth="lg">
                 <SectionTitle variant="h3">{title}</SectionTitle>
                 <Grid container spacing={4} alignItems="center">
-                    <Grid>
+                    <Grid size={{xs: 12, md: 6}}>
                         <Fade in={animate} timeout={1000}>
                             <Box
                                 component="img"
@@ -31,7 +31,7 @@ const HowItWorksSection = ({title, imageUrl, steps, animate}: HowItWorksSectionP
                             />
                         </Fade>
                     </Grid>
-                    <Grid>
+                    <Grid size={{xs: 12, md: 6}}>
                         <Stack spacing={4}>
                             {steps.map((step, index) => (
                                 <Fade key={step.step} in={animate} timeout={1000}
@@ -69,4 +69,3 @@ const HowItWorksSection = ({title, imageUrl, steps, animate}: HowItWorksSectionP
 };
 
 export default HowItWorksSection;
-

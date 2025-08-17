@@ -28,12 +28,12 @@ export type TestimonialsSectionProps = {
 const TestimonialsSection = ({title, items, animate}: TestimonialsSectionProps) => {
     const theme = useTheme();
     return (
-        <Box sx={{py: 8, backgroundColor: theme.palette.grey[50]}}>
+        <Box sx={{py: 8, backgroundColor: theme.palette.background.default}}>
             <Container maxWidth="lg">
                 <SectionTitle variant="h3">{title}</SectionTitle>
                 <Grid container spacing={4}>
                     {items.map((testimonial, index) => (
-                        <Grid key={testimonial.id}>
+                        <Grid size={{ xs: 12, md: 4 }} key={testimonial.id}>
                             <Fade in={animate} timeout={1000} style={{transitionDelay: `${index * 200}ms`}}>
                                 <TestimonialCard>
                                     <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
@@ -62,4 +62,3 @@ const TestimonialsSection = ({title, items, animate}: TestimonialsSectionProps) 
 };
 
 export default TestimonialsSection;
-
