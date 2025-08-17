@@ -1,13 +1,18 @@
-import {Box, Typography} from "@mui/material";
+import {Typography, Paper, styled} from "@mui/material";
 import {PreferencesForm} from "./PreferencesForm.tsx";
+
+const PreferencesContainer = styled(Paper)(({theme}) => ({
+    padding: theme.spacing(2),
+    marginTop: theme.spacing(2),
+}));
 
 export const Preferences = () => {
     return (
-        <Box flex={1}>
-            <Typography variant="h3" align={"center"}>
-                Your preferences
+        <PreferencesContainer>
+            <Typography variant="h6" gutterBottom>
+                Preferences
             </Typography>
             <PreferencesForm/>
-        </Box>
+        </PreferencesContainer>
     );
 };

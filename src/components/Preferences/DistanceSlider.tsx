@@ -1,5 +1,5 @@
 import {type ChangeEvent, memo, useCallback} from "react";
-import {Box, Slider, TextField, Typography} from "@mui/material";
+import {Box, Slider, TextField, Typography, Stack} from "@mui/material";
 
 interface DistanceSliderProps {
     maxDistance: number;
@@ -40,8 +40,8 @@ const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
     }, [value, onChange]);
 
     return (
-        <Box m={2}>
-            <Typography gutterBottom>Preferred distance</Typography>
+        <Stack spacing={1.5}>
+            <Typography variant="body2" color="text.secondary">Preferred distance</Typography>
             <Slider
                 getAriaLabel={() => 'Distance slider'}
                 value={value}
@@ -51,7 +51,7 @@ const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
                 max={100}
                 marks={marks}
             />
-            <Box sx={{display: 'flex', justifyContent: 'center', mt: 1}}>
+            <Box sx={{display: 'flex'}}>
                 <TextField
                     label="Km"
                     value={value}
@@ -68,7 +68,7 @@ const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
                     fullWidth
                 />
             </Box>
-        </Box>
+        </Stack>
     );
 };
 

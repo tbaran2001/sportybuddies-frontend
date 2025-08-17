@@ -1,4 +1,4 @@
-import {Box, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select, Typography, Stack} from "@mui/material";
 import type {SelectChangeEvent} from "@mui/material";
 import {memo, useCallback} from "react";
 
@@ -13,9 +13,9 @@ const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
     }, [onChange]);
 
     return (
-        <Box m={2}>
-            <Typography>Looking for</Typography>
-            <FormControl fullWidth variant="outlined" margin="normal">
+        <Stack spacing={1.5}>
+            <Typography variant="body2" color="text.secondary">Looking for</Typography>
+            <FormControl fullWidth variant="outlined">
                 <InputLabel id="gender-select-label">Gender</InputLabel>
                 <Select
                     labelId="gender-select-label"
@@ -28,7 +28,7 @@ const GenderSelect = ({gender, onChange}: GenderSelectProps) => {
                     <MenuItem value="2">Female</MenuItem>
                 </Select>
             </FormControl>
-        </Box>
+        </Stack>
     );
 };
 

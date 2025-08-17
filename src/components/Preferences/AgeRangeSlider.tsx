@@ -1,5 +1,5 @@
 import {type ChangeEvent, memo, useCallback} from "react";
-import {Box, Slider, TextField, Typography} from "@mui/material";
+import {Box, Slider, TextField, Typography, Stack} from "@mui/material";
 
 interface AgeRangeSliderProps {
     minAge: number;
@@ -57,8 +57,8 @@ const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
     }, [minAge, maxAge, onChange]);
 
     return (
-        <Box m={2}>
-            <Typography gutterBottom>Preferred age</Typography>
+        <Stack spacing={1.5}>
+            <Typography variant="body2" color="text.secondary">Preferred age</Typography>
             <Slider
                 getAriaLabel={() => 'Age range slider'}
                 value={value}
@@ -69,7 +69,7 @@ const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
                 marks={marks}
                 disableSwap
             />
-            <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 1}}>
+            <Box sx={{display: 'flex', gap: 2}}>
                 <TextField
                     label="Min"
                     value={value[0]}
@@ -83,6 +83,7 @@ const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
                         }
                     }}
                     variant="outlined"
+                    sx={{ flex: 1 }}
                 />
                 <TextField
                     label="Max"
@@ -97,9 +98,10 @@ const AgeRangeSlider = ({minAge, maxAge, onChange}: AgeRangeSliderProps) => {
                         }
                     }}
                     variant="outlined"
+                    sx={{ flex: 1 }}
                 />
             </Box>
-        </Box>
+        </Stack>
     );
 };
 

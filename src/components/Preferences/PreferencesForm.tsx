@@ -1,5 +1,5 @@
 import {useState, useEffect, useCallback} from "react";
-import {Box, Button} from "@mui/material";
+import {Stack, Button} from "@mui/material";
 import {useGetMyProfileQuery, useUpdateProfilePreferencesMutation} from "../../store/api.ts";
 import AgeRangeSlider from "./AgeRangeSlider.tsx";
 import GenderSelect from "./GenderSelect.tsx";
@@ -50,7 +50,7 @@ export const PreferencesForm = () => {
     }
 
     return (
-        <Box sx={{padding: 3, maxWidth: 400, margin: 'auto'}}>
+        <Stack spacing={2}>
             <AgeRangeSlider
                 minAge={ageRange[0]}
                 maxAge={ageRange[1]}
@@ -67,11 +67,11 @@ export const PreferencesForm = () => {
             <Button
                 variant="contained"
                 fullWidth
-                sx={{marginTop: 2}}
+                sx={{mt: 1}}
                 onClick={handleSubmit}
             >
                 Save preferences
             </Button>
-        </Box>
+        </Stack>
     );
 };
