@@ -13,9 +13,11 @@ import {
     ListItem,
     ListItemButton,
     ListItemText,
-    Divider
+    Divider,
+    Tooltip
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {selectCurrentToken} from "../../store/authSlice.ts";
 import {AppBrand} from './AppBrand';
 import {UserMenu} from './UserMenu';
@@ -130,6 +132,30 @@ export const MainNavigation = () => {
                                 <NavPagesButtons pages={privatePages} onClose={handleCloseNavMenu}/>
                             )}
                         </Box>
+
+                        {/* Help tooltip icon */}
+                        <Tooltip
+                            arrow
+                            placement="bottom"
+                            enterTouchDelay={0}
+                            leaveTouchDelay={3000}
+                            title={
+                                <Box component="ul" sx={{m: 0, pl: 2}}>
+                                    <li>Sign up and log in (any valid email).</li>
+                                    <li>Complete your profile: choose sports, add a short bio, edit basic info</li>
+                                    <li>Set your preferences in Profile.</li>
+                                    <li>If no candidates appear, allow location in the browser or increase the distance (by default it's set to Wroclaw).</li>
+                                    <li>To test matching, create a SECOND account (e.g., in another browser/incognito), complete the profile and align preferences so the accounts can find each other.</li>
+                                    <li>Open Matching and swipe right on both accounts to get a match.</li>
+                                    <li>If both liked each other, go to Buddies and start conversation</li>
+                                    <li>Go to Chat and exchange a few messages.</li>
+                                </Box>
+                            }
+                        >
+                            <IconButton aria-label="How to test the app" color="inherit" sx={{mr: 1}}>
+                                <HelpOutlineIcon/>
+                            </IconButton>
+                        </Tooltip>
 
                         {token ? (
                             <UserMenu settings={userSettings} onNavigate={handleNavigate}/>
