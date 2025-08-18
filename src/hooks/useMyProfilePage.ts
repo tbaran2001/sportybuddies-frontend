@@ -1,12 +1,14 @@
 import {useState, useMemo, useCallback} from 'react';
 import {
     useGetMyProfileQuery,
-    useGetSportsQuery,
     useUpdateProfilePartialMutation,
+    useUpdateProfileLocationMutation,
+} from '../store/api/profiles.ts';
+import {
+    useGetSportsQuery,
     useAddProfileSportMutation,
     useRemoveProfileSportMutation,
-    useUpdateProfileLocationMutation,
-} from '../store/api';
+} from '../store/api/sports.ts';
 import type {Sport, Profile} from '../models/profile';
 import {getRandomSportsPhotos} from '../utils/samplePhotos';
 import type {NotificationState} from '../components/common/NotificationSnackbar';

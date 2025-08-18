@@ -1,7 +1,7 @@
 import {useState, type FormEvent} from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {useLoginMutation} from "../store/api.ts";
+import {useLoginMutation} from "../store/api/auth.ts";
 import {setToken} from "../store/authSlice.ts";
 import {
     Box,

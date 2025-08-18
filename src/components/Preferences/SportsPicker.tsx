@@ -5,7 +5,7 @@ import {
     useGetMyProfileQuery,
     useGetSportsQuery,
     useRemoveProfileSportMutation
-} from "../../store/api.ts";
+} from "../../store/api/api.ts";
 import type {Sport} from "../../models/profile.ts";
 
 const StyledCheckbox = styled(Checkbox)(() => ({

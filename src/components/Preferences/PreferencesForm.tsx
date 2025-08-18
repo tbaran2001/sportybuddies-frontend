@@ -1,6 +1,6 @@
 import {useState, useEffect, useCallback} from "react";
 import {Stack, Button} from "@mui/material";
-import {useGetMyProfileQuery, useUpdateProfilePreferencesMutation} from "../../store/api.ts";
+import {useGetMyProfileQuery, useUpdateProfilePreferencesMutation} from "../../store/api/profiles.ts";
 import AgeRangeSlider from "./AgeRangeSlider.tsx";
 import GenderSelect from "./GenderSelect.tsx";
 import DistanceSlider from "./DistanceSlider.tsx";

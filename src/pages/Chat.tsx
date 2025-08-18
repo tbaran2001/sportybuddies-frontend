@@ -16,13 +16,13 @@ import ConversationList from '../components/Chat/ConversationList';
 import MessageThread from '../components/Chat/MessageThread';
 import MessageInput from '../components/Chat/MessageInput';
 import {
-    useGetMyProfileQuery,
     useGetConversationQuery,
     useGetConversationMessagesQuery,
     useSendMessageMutation,
     useGetProfileConversationsQuery,
     useGetLatestProfileConversationQuery
-} from '../store/api';
+} from '../store/api/conversations.ts';
+import {useGetMyProfileQuery} from '../store/api/profiles.ts';
 
 const ChatContainer = styled(Box)(({theme}) => ({
     height: 'calc(100vh - 180px)',

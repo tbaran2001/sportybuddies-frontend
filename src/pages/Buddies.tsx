@@ -9,7 +9,9 @@ import {
     Alert,
 } from '@mui/material';
 import PageContent from '../components/PageContent';
-import {useGetMyProfileQuery, useGetProfileBuddiesQuery, useCreateConversationMutation} from '../store/api';
+import {useGetProfileBuddiesQuery} from '../store/api/matches.ts';
+import {useCreateConversationMutation} from '../store/api/conversations.ts';
+import {useGetMyProfileQuery} from '../store/api/profiles.ts';
 import type {Buddy} from '../models/profile.ts';
 import BuddyCard from '../components/Buddies/BuddyCard';
 import EmptyBuddiesState from '../components/Buddies/EmptyBuddiesState';

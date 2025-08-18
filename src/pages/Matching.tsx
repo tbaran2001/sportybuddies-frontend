@@ -12,7 +12,8 @@ import MatchCardContainer from '../components/Matching/MatchCardContainer';
 import MatchHeader from '../components/Matching/MatchHeader';
 import MatchDetails from '../components/Matching/MatchDetails';
 import SwipeButtons from '../components/Matching/SwipeButtons';
-import {useGetMyProfileQuery, useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from '../store/api';
+import {useGetRandomMatchQuery, useUpdateMatchSwipeMutation} from '../store/api/matches.ts';
+import {useGetMyProfileQuery} from '../store/api/profiles.ts';
 import {getRandomSportsPhotos} from '../utils/samplePhotos';
 import {calculateAge} from '../utils/profileUtils';
 
