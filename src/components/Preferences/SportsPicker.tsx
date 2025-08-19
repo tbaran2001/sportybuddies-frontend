@@ -1,11 +1,7 @@
 import {Box, Checkbox, styled, Tooltip} from '@mui/material';
 import {sportsIcons} from '../../utils/sportsIcons';
-import {
-    useAddProfileSportMutation,
-    useGetMyProfileQuery,
-    useGetSportsQuery,
-    useRemoveProfileSportMutation
-} from "../../store/api/api.ts";
+import {useGetMyProfileQuery} from "../../store/api/profiles.ts";
+import {useAddProfileSportMutation, useGetSportsQuery, useRemoveProfileSportMutation} from "../../store/api/sports.ts";
 import type {Sport} from "../../models/profile.ts";
 
 const StyledCheckbox = styled(Checkbox)(() => ({
@@ -23,7 +19,7 @@ export const SportsPicker = () => {
     const handleToggleSport = (sport: Sport) => {
         if (!myProfile) return;
 
-        if (myProfile.sports.some((s) => s.id === sport.id)) {
+        if (myProfile.sports.some((s: Sport) => s.id === sport.id)) {
             removeProfileSport({profileId: myProfile.id, sportId: sport.id});
         } else {
             addProfileSport({profileId: myProfile.id, sportId: sport.id});
@@ -40,9 +36,9 @@ export const SportsPicker = () => {
 
     return (
         <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
-            {sports.map(({id, name}) => {
+            {sports.map(({id, name}: Sport) => {
                 const Icon = sportsIcons[name] || sportsIcons['default'];
-                const isChecked = myProfile.sports.some((sport) => sport.id === id);
+                const isChecked = myProfile.sports.some((sport: Sport) => sport.id === id);
                 return (
                     <Box key={id}>
                         <Tooltip title={name} arrow>
