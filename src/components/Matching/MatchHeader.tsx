@@ -8,6 +8,7 @@ interface MatchHeaderProps {
     age: number;
     distanceKm?: number;
     showLocation?: boolean;
+    address?: string;
     expanded: boolean;
     onToggle: () => void;
 }
@@ -29,7 +30,7 @@ const ExpandButton = styled(Button)(({theme}) => ({
     textTransform: 'none',
 }));
 
-const MatchHeader = ({name, age, distanceKm, showLocation, expanded, onToggle}: MatchHeaderProps) => {
+const MatchHeader = ({name, age, distanceKm, showLocation, address, expanded, onToggle}: MatchHeaderProps) => {
     const displayDistanceKm = typeof distanceKm === 'number' && !Number.isNaN(distanceKm)
         ? Math.max(1, Math.round(distanceKm))
         : null;
@@ -46,7 +47,9 @@ const MatchHeader = ({name, age, distanceKm, showLocation, expanded, onToggle}: 
             {showLocation && displayDistanceKm !== null && (
                 <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
                     <LocationOnIcon fontSize="small"/>
-                    <Typography variant="body2">{displayDistanceKm} km</Typography>
+                    <Typography variant="body2">
+                        {displayDistanceKm} km{address ? ` • ${address}` : ''}
+                    </Typography>
                 </Box>
             )}
 

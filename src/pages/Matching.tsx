@@ -110,6 +110,7 @@ export const MatchingPage = () => {
                             age={age}
                             distanceKm={match.distance}
                             showLocation={!!matchedProfile.location}
+                            address={matchedProfile.location?.address}
                             expanded={expanded}
                             onToggle={toggleExpanded}
                         />

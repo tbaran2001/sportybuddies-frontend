@@ -12,8 +12,8 @@ const marks = [
         label: '1',
     },
     {
-        value: 100,
-        label: '100',
+        value: 1000,
+        label: '1000',
     },
 ];
 
@@ -28,14 +28,14 @@ const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
     const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         let newValue = Number(event.target.value);
         if (newValue < 1) newValue = 1;
-        if (newValue > 100) newValue = 100;
+        if (newValue > 1000) newValue = 1000;
         onChange(newValue);
     }, [onChange]);
 
     const handleBlur = useCallback(() => {
         let newValue = value;
         if (newValue < 1) newValue = 1;
-        if (newValue > 100) newValue = 100;
+        if (newValue > 1000) newValue = 1000;
         onChange(newValue);
     }, [value, onChange]);
 
@@ -48,7 +48,7 @@ const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
                 onChange={handleSliderChange}
                 valueLabelDisplay="auto"
                 min={1}
-                max={100}
+                max={1000}
                 marks={marks}
             />
             <Box sx={{display: 'flex'}}>
@@ -61,7 +61,7 @@ const DistanceSlider = ({maxDistance, onChange}: DistanceSliderProps) => {
                     slotProps={{
                         htmlInput: {
                             min: 1,
-                            max: 100
+                            max: 1000
                         }
                     }}
                     variant="outlined"
